@@ -136,57 +136,92 @@
       text-decoration: underline;
     }
 
-    /* Profile dropdown */
-    .profile-container {
-      position: absolute;
-      top: 10px;
+    /* Profile dropdown styles */
+    .profile-wrapper {
+      position: fixed;
+      top: 20px;
       right: 20px;
-      cursor: pointer;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 10px;
     }
 
-    .profile-img {
-      width: 40px;
-      height: 40px;
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: background-color 0.2s;
+    }
+
+    .profile-info:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .username {
+      font-weight: bold;
+    }
+
+    .profile-icon {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background-color: gray;
+      background-color: #007BFF;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
       color: white;
+      font-weight: bold;
     }
 
-    .dropdown {
-      display: none;
+    .dropdown-menu {
       position: absolute;
       top: 50px;
       right: 0;
-      min-width: 150px;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      padding: 10px 0;
+      min-width: 180px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+      z-index: 100;
     }
 
-    .dropdown-button {
-      padding: 12px 25px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      text-align: center;
+    .profile-wrapper:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .dropdown-menu button {
       width: 100%;
-      font-size: 1.1rem;
-      transition: background-color 0.3s, transform 0.2s;
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      color: white;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
 
-    .dropdown-button:hover {
-      background-color: #0056b3;
-      transform: scale(1.05);
+    .dropdown-menu button:hover {
+      background-color: #007BFF;
     }
 
-    .profile-container:hover .dropdown {
-      display: block;
+    /* Auto-hide dropdown after inactivity */
+    .profile-wrapper:hover ~ .dropdown-auto-hide {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+    }
+
+    .dropdown-auto-hide {
+      transition-delay: 5s;
+      opacity: 0;
+      visibility: hidden;
     }
   </style>
 </head>
@@ -206,11 +241,14 @@
     </div>
   </div>
 
-  <!-- Profile Icon with dropdown -->
-  <div class="profile-container" id="profile-container" style="display: none;">
-    <div class="profile-img"></div>
-    <div class="dropdown">
-      <button class="dropdown-button" onclick="signOut()">Sign Out</button>
+  <!-- Profile section with dropdown -->
+  <div class="profile-wrapper" id="profile-wrapper" style="display: none;">
+    <div class="profile-info" id="profile-info">
+      <div class="profile-icon" id="profile-icon"></div>
+      <span class="username" id="username-display"></span>
+    </div>
+    <div class="dropdown-menu dropdown-auto-hide">
+      <button onclick="signOut()">Sign Out</button>
     </div>
   </div>
 
@@ -227,20 +265,27 @@
   <script>
     // Track if we should show error on page load
     let showErrorOnLoad = localStorage.getItem('showErrorOnLoad') === 'true';
+    let dropdownHideTimeout;
     
     // Detect if user is signed in
     function checkLoginStatus() {
       const currentUser = localStorage.getItem("currentUser");
 
       if (currentUser) {
-        // Show "Sign in successful" message and profile icon
+        // Show profile section
+        document.getElementById("profile-wrapper").style.display = "flex";
+        document.getElementById("username-display").textContent = currentUser;
+        document.getElementById("profile-icon").textContent = currentUser.charAt(0).toUpperCase();
+        
+        // Show "Sign in successful" message and hide auth links
         document.getElementById("sign-in-success").style.display = "block";
-        document.getElementById("profile-container").style.display = "flex";
         document.getElementById("auth-links").style.display = "none";
-        document.querySelector(".profile-img").textContent = currentUser.charAt(0).toUpperCase();
         
         // Hide login/signup links
         setTimeout(() => document.getElementById("sign-in-success").style.display = "none", 4000);
+        
+        // Setup dropdown auto-hide
+        setupDropdownAutoHide();
       } else if (showErrorOnLoad) {
         // Only show error if we've set the flag
         document.getElementById("error").style.display = "block";
@@ -251,6 +296,22 @@
         // Reset the flag
         localStorage.setItem('showErrorOnLoad', 'false');
       }
+    }
+    
+    function setupDropdownAutoHide() {
+      const profileWrapper = document.getElementById("profile-wrapper");
+      const dropdown = document.querySelector(".dropdown-menu");
+      
+      profileWrapper.addEventListener("mouseenter", () => {
+        clearTimeout(dropdownHideTimeout);
+        dropdown.classList.remove("dropdown-auto-hide");
+      });
+      
+      profileWrapper.addEventListener("mouseleave", () => {
+        dropdownHideTimeout = setTimeout(() => {
+          dropdown.classList.add("dropdown-auto-hide");
+        }, 5000); // 5 seconds delay
+      });
     }
 
     // Toggle between light and dark mode
