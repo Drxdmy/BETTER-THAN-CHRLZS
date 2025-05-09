@@ -32,6 +32,7 @@
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
 
     .button {
@@ -53,7 +54,11 @@
     }
 
     .error-message {
-      margin-top: 20px;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: 10px;
       padding: 10px 20px;
       background-color: #ff4d4f;
       color: white;
@@ -61,6 +66,7 @@
       font-size: 0.95rem;
       opacity: 1;
       transition: opacity 1s ease-out;
+      z-index: 1;
     }
 
     .fade-out {
@@ -129,9 +135,11 @@
     <button class="button" onclick="showError()">Find Friends</button>
     <button class="button" onclick="showError()">Chats</button>
     <button class="button" onclick="showError()">Profile</button>
-  </div>
 
-  <div id="error" class="error-message" style="display:none;">ERROR: Please log in or sign up to continue</div>
+    <div id="error" class="error-message" style="display:none;">
+      ERROR: Please log in or sign up to continue
+    </div>
+  </div>
 
   <a href="login.html" class="login-link">Login | Sign Up</a>
   <a href="index.html" class="back-link">← Back</a>
