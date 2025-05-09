@@ -136,185 +136,136 @@
       text-decoration: underline;
     }
 
-    .top-right-wrapper {
-      position: fixed;
-      top: 20px;
+    /* Profile dropdown */
+    .profile-container {
+      position: absolute;
+      top: 10px;
       right: 20px;
-    }
-
-    .top-right-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .top-right-user img {
-      width: 36px;
-      height: 36px;
+    .profile-img {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-    }
-
-    .top-right-user span {
-      font-weight: bold;
+      background-color: gray;
     }
 
     .dropdown {
       display: none;
+      flex-direction: column;
+      gap: 10px;
       position: absolute;
-      top: 48px;
+      top: 50px;
       right: 0;
-      background-color: #222;
-      color: white;
-      padding: 6px 12px;
+      background-color: #fff;
+      border: 1px solid #ddd;
       border-radius: 6px;
-      z-index: 999;
-      white-space: nowrap;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-button {
+      padding: 8px 20px;
+      background-color: #ff4d4f;
+      color: white;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+      text-align: center;
     }
 
-    .dropdown.visible {
-      display: block;
+    .dropdown-button:hover {
+      background-color: #e03e3e;
     }
 
-    .success-message {
-      margin-top: 10px;
-      font-size: 1.1rem;
-      color: #4CAF50;
-      font-weight: bold;
-      transition: opacity 1s;
-    }
-
-    .success-fade {
-      opacity: 0;
+    .profile-container:hover .dropdown {
+      display: flex;
     }
   </style>
 </head>
 <body class="dark-mode">
 
-  <!-- Profile & Username -->
-  <div class="top-right-wrapper" id="userPanel" style="display: none;">
-    <div class="top-right-user" id="profileArea">
-      <span id="usernameDisplay"></span>
-      <img src="https://www.gravatar.com/avatar?d=mp&s=36" alt="Profile" />
-    </div>
-    <div class="dropdown" id="signOutDropdown" onclick="signOut()">Sign out</div>
-  </div>
-
   <div class="button-container">
-    <button class="button" onclick="handleFeatureClick()">Find Friends</button>
-    <button class="button" onclick="handleFeatureClick()">Chats</button>
-    <button class="button" onclick="handleFeatureClick()">Profile</button>
+    <button class="button" onclick="showError()">Find Friends</button>
+    <button class="button" onclick="showError()">Chats</button>
+    <button class="button" onclick="showError()">Profile</button>
 
-    <div id="error" class="error-message" style="display:none;"></div>
+    <div id="error" class="error-message" style="display:none;">
+      ERROR: Please log in or sign up to continue
+    </div>
+
+    <div id="sign-in-success" style="display:none; padding: 10px; background-color: green; color: white; border-radius: 6px;">
+      Sign in successful!
+    </div>
   </div>
 
-  <div class="success-message" id="successMsg" style="display: none;">Sign in successful!</div>
+  <!-- Profile Icon with dropdown -->
+  <div class="profile-container" id="profile-container">
+    <div class="profile-img"></div>
+    <div class="dropdown">
+      <button class="dropdown-button" onclick="signOut()">Sign Out</button>
+    </div>
+  </div>
 
-  <div class="auth-links">
+  <!-- Auth Links - Login and Sign Up -->
+  <div class="auth-links" id="auth-links">
     <a href="login.html">Login</a>
     <span>|</span>
-    <a href="#" onclick="handleSignUp()">Sign Up</a>
+    <a href="signup.html">Sign Up</a>
   </div>
 
   <a href="index.html" class="back-link">← Back</a>
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
-    let dropdownTimer;
+    // Detect if user is signed in
+    function checkLoginStatus() {
+      const currentUser = localStorage.getItem("currentUser");
 
+      if (currentUser) {
+        // Show "Sign in successful" message and profile icon
+        document.getElementById("sign-in-success").style.display = "block";
+        document.getElementById("profile-container").style.display = "flex";
+        document.getElementById("auth-links").style.display = "none";
+        document.querySelector(".profile-img").textContent = currentUser.charAt(0).toUpperCase();
+        
+        // Hide login/signup links
+        setTimeout(() => document.getElementById("sign-in-success").style.display = "none", 4000);
+      } else {
+        document.getElementById("error").style.display = "block";
+        setTimeout(() => document.getElementById("error").style.display = "none", 4000);
+      }
+    }
+
+    // Toggle between light and dark mode
     function toggleMode() {
       const body = document.body;
       body.classList.toggle('dark-mode');
       body.classList.toggle('light-mode');
     }
 
-    function showError(message) {
+    // Sign out function
+    function signOut() {
+      localStorage.removeItem("currentUser");
+      sessionStorage.removeItem("justLoggedIn");
+      window.location.reload();
+    }
+
+    // Show error message
+    function showError() {
       const error = document.getElementById('error');
-      error.textContent = message;
       error.style.display = 'block';
       error.classList.remove('fade-out');
+
       setTimeout(() => error.classList.add('fade-out'), 4000);
       setTimeout(() => error.style.display = 'none', 5000);
     }
 
-    function handleSignUp() {
-      const currentUser = localStorage.getItem("currentUser");
-      if (currentUser) {
-        showError("Please sign out to use this feature.");
-      } else {
-        window.location.href = "signup.html";
-      }
-    }
-
-    function handleFeatureClick() {
-      const currentUser = localStorage.getItem("currentUser");
-      if (!currentUser) {
-        showError("Please log in or sign up to continue.");
-      } else {
-        // Replace with desired feature logic
-        console.log("Accessing feature as:", currentUser);
-      }
-    }
-
-    function signOut() {
-      localStorage.removeItem("currentUser");
-      sessionStorage.removeItem("justLoggedIn");
-      window.location.href = "login.html";
-    }
-
-    function goToProfile() {
-      window.location.href = "profile.html";
-    }
-
-    window.onload = function () {
-      const currentUser = localStorage.getItem("currentUser");
-      const justLoggedIn = sessionStorage.getItem("justLoggedIn");
-
-      const userPanel = document.getElementById("userPanel");
-      const usernameDisplay = document.getElementById("usernameDisplay");
-      const successMsg = document.getElementById("successMsg");
-
-      if (currentUser) {
-        userPanel.style.display = "block";
-        usernameDisplay.textContent = currentUser;
-
-        if (justLoggedIn === "true") {
-          successMsg.style.display = "block";
-          setTimeout(() => successMsg.classList.add("success-fade"), 3000);
-          setTimeout(() => successMsg.style.display = "none", 4000);
-          sessionStorage.removeItem("justLoggedIn");
-        }
-
-        // Hover events for dropdown
-        const profileArea = document.getElementById("profileArea");
-        const dropdown = document.getElementById("signOutDropdown");
-
-        profileArea.addEventListener("mouseenter", () => {
-          dropdown.classList.add("visible");
-          clearTimeout(dropdownTimer);
-        });
-
-        profileArea.addEventListener("mouseleave", () => {
-          dropdownTimer = setTimeout(() => {
-            dropdown.classList.remove("visible");
-          }, 5000); // 5 seconds after mouse leaves
-        });
-
-        dropdown.addEventListener("mouseenter", () => {
-          clearTimeout(dropdownTimer);
-        });
-
-        dropdown.addEventListener("mouseleave", () => {
-          dropdownTimer = setTimeout(() => {
-            dropdown.classList.remove("visible");
-          }, 5000);
-        });
-
-        // Clicking the username area also goes to profile
-        profileArea.addEventListener("click", goToProfile);
-      }
-    };
+    // Call checkLoginStatus on page load
+    checkLoginStatus();
   </script>
 </body>
 </html>
