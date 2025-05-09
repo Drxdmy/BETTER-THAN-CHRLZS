@@ -136,10 +136,13 @@
       text-decoration: underline;
     }
 
-    .top-right-user {
+    .top-right-wrapper {
       position: fixed;
       top: 20px;
       right: 20px;
+    }
+
+    .top-right-user {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -166,17 +169,11 @@
       padding: 6px 12px;
       border-radius: 6px;
       z-index: 999;
-      cursor: pointer;
       white-space: nowrap;
+      cursor: pointer;
     }
 
-    .top-right-wrapper {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-    }
-
-    .top-right-wrapper:hover .dropdown {
+    .dropdown.visible {
       display: block;
     }
 
@@ -197,21 +194,19 @@
 
   <!-- Profile & Username -->
   <div class="top-right-wrapper" id="userPanel" style="display: none;">
-    <div class="top-right-user" onclick="goToProfile()">
+    <div class="top-right-user" id="profileArea">
       <span id="usernameDisplay"></span>
       <img src="https://www.gravatar.com/avatar?d=mp&s=36" alt="Profile" />
     </div>
-    <div class="dropdown" onclick="signOut()">Sign out</div>
+    <div class="dropdown" id="signOutDropdown" onclick="signOut()">Sign out</div>
   </div>
 
   <div class="button-container">
-    <button class="button" onclick="showError()">Find Friends</button>
-    <button class="button" onclick="showError()">Chats</button>
-    <button class="button" onclick="showError()">Profile</button>
+    <button class="button" onclick="handleFeatureClick()">Find Friends</button>
+    <button class="button" onclick="handleFeatureClick()">Chats</button>
+    <button class="button" onclick="handleFeatureClick()">Profile</button>
 
-    <div id="error" class="error-message" style="display:none;">
-      ERROR: Please log in or sign up to continue
-    </div>
+    <div id="error" class="error-message" style="display:none;"></div>
   </div>
 
   <div class="success-message" id="successMsg" style="display: none;">Sign in successful!</div>
@@ -226,14 +221,17 @@
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
+    let dropdownTimer;
+
     function toggleMode() {
       const body = document.body;
       body.classList.toggle('dark-mode');
       body.classList.toggle('light-mode');
     }
 
-    function showError() {
+    function showError(message) {
       const error = document.getElementById('error');
+      error.textContent = message;
       error.style.display = 'block';
       error.classList.remove('fade-out');
       setTimeout(() => error.classList.add('fade-out'), 4000);
@@ -242,21 +240,21 @@
 
     function handleSignUp() {
       const currentUser = localStorage.getItem("currentUser");
-      const error = document.getElementById("error");
-
       if (currentUser) {
-        error.textContent = "Please sign out to use this feature.";
-        error.style.display = "block";
-        error.classList.remove("fade-out");
-        setTimeout(() => error.classList.add("fade-out"), 4000);
-        setTimeout(() => error.style.display = "none", 5000);
+        showError("Please sign out to use this feature.");
       } else {
         window.location.href = "signup.html";
       }
     }
 
-    function goToProfile() {
-      window.location.href = "profile.html";
+    function handleFeatureClick() {
+      const currentUser = localStorage.getItem("currentUser");
+      if (!currentUser) {
+        showError("Please log in or sign up to continue.");
+      } else {
+        // Replace with desired feature logic
+        console.log("Accessing feature as:", currentUser);
+      }
     }
 
     function signOut() {
@@ -265,21 +263,56 @@
       window.location.href = "login.html";
     }
 
+    function goToProfile() {
+      window.location.href = "profile.html";
+    }
+
     window.onload = function () {
       const currentUser = localStorage.getItem("currentUser");
       const justLoggedIn = sessionStorage.getItem("justLoggedIn");
 
+      const userPanel = document.getElementById("userPanel");
+      const usernameDisplay = document.getElementById("usernameDisplay");
+      const successMsg = document.getElementById("successMsg");
+
       if (currentUser) {
-        document.getElementById("userPanel").style.display = "block";
-        document.getElementById("usernameDisplay").textContent = currentUser;
+        userPanel.style.display = "block";
+        usernameDisplay.textContent = currentUser;
 
         if (justLoggedIn === "true") {
-          const success = document.getElementById("successMsg");
-          success.style.display = "block";
-          setTimeout(() => success.classList.add("success-fade"), 3000);
-          setTimeout(() => success.style.display = "none", 4000);
+          successMsg.style.display = "block";
+          setTimeout(() => successMsg.classList.add("success-fade"), 3000);
+          setTimeout(() => successMsg.style.display = "none", 4000);
           sessionStorage.removeItem("justLoggedIn");
         }
+
+        // Hover events for dropdown
+        const profileArea = document.getElementById("profileArea");
+        const dropdown = document.getElementById("signOutDropdown");
+
+        profileArea.addEventListener("mouseenter", () => {
+          dropdown.classList.add("visible");
+          clearTimeout(dropdownTimer);
+        });
+
+        profileArea.addEventListener("mouseleave", () => {
+          dropdownTimer = setTimeout(() => {
+            dropdown.classList.remove("visible");
+          }, 5000); // 5 seconds after mouse leaves
+        });
+
+        dropdown.addEventListener("mouseenter", () => {
+          clearTimeout(dropdownTimer);
+        });
+
+        dropdown.addEventListener("mouseleave", () => {
+          dropdownTimer = setTimeout(() => {
+            dropdown.classList.remove("visible");
+          }, 5000);
+        });
+
+        // Clicking the username area also goes to profile
+        profileArea.addEventListener("click", goToProfile);
       }
     };
   </script>
