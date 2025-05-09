@@ -14,6 +14,7 @@
       --button-bg: #007BFF;
       --button-hover: #0056b3;
       --link-color: white;
+      --error-color: #ff4d4d;
     }
 
     body.light-mode {
@@ -68,18 +69,25 @@
 
     input {
       width: 100%;
-      padding: 12px;
+      padding: 12px 15px;
       font-size: 1rem;
       background-color: var(--input-bg);
       color: var(--text-color);
       border: 1px solid var(--input-border);
       border-radius: 6px;
+      box-sizing: border-box;
       transition: border-color 0.3s, background-color 0.3s;
     }
 
     input:focus {
       border-color: var(--button-bg);
       outline: none;
+    }
+
+    .error {
+      color: var(--error-color);
+      font-size: 0.9rem;
+      margin-top: 5px;
     }
 
     .button {
@@ -139,19 +147,27 @@
 </head>
 <body class="dark-mode">
 
-  <a href="Chat" class="back-link">← Back</a>
+  <a href="chat.html" class="back-link">← Back</a>
 
   <div class="form-container">
     <h2>Sign Up</h2>
 
     <div class="form-group">
-      <label for="username">Enter a Username</label>
+      <label for="username">Username</label>
       <input type="text" id="username" placeholder="Username" />
+      <div id="username-error" class="error"></div>
     </div>
 
     <div class="form-group">
-      <label for="password">Enter a Password</label>
+      <label for="password">Password</label>
       <input type="password" id="password" placeholder="Password" />
+      <div id="password-error" class="error"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirm-password">Confirm Password</label>
+      <input type="password" id="confirm-password" placeholder="Re-enter Password" />
+      <div id="confirm-error" class="error"></div>
     </div>
 
     <button class="button" onclick="signUp()">Sign Up</button>
@@ -160,17 +176,6 @@
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
-    function signUp() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      if (username && password) {
-        alert('Sign up successful!');
-      } else {
-        alert('Please fill out both fields.');
-      }
-    }
-
     function toggleMode() {
       const body = document.body;
       body.classList.toggle('light-mode');
@@ -178,6 +183,48 @@
 
       const toggleBtn = document.querySelector('.toggle-btn');
       toggleBtn.textContent = body.classList.contains('light-mode') ? '🌞' : '🌙';
+    }
+
+    function signUp() {
+      // Grab values
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      // Error elements
+      const usernameErr = document.getElementById('username-error');
+      const passwordErr = document.getElementById('password-error');
+      const confirmErr = document.getElementById('confirm-error');
+
+      // Reset errors
+      usernameErr.textContent = '';
+      passwordErr.textContent = '';
+      confirmErr.textContent = '';
+
+      // Validation
+      let isValid = true;
+
+      if (!username) {
+        usernameErr.textContent = 'Username is required.';
+        isValid = false;
+      }
+
+      if (!password) {
+        passwordErr.textContent = 'Password is required.';
+        isValid = false;
+      }
+
+      if (password && confirmPassword !== password) {
+        confirmErr.textContent = 'Passwords do not match.';
+        isValid = false;
+      }
+
+      // If valid, store in localStorage and redirect
+      if (isValid) {
+        localStorage.setItem('chatAppUsername', username);
+        localStorage.setItem('chatAppPassword', password);
+        window.location.href = 'chat.html';
+      }
     }
   </script>
 </body>
