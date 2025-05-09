@@ -128,31 +128,6 @@
     .rainbow-active {
       animation: rainbowStrobe 0.6s ease-in-out;
     }
-
-    /* Burst lines */
-    .burst-line {
-      position: absolute;
-      width: 4px;
-      height: 20px;
-      background: white;
-      top: 50%;
-      left: 50%;
-      transform-origin: center bottom;
-      opacity: 0;
-      animation: burstLine 0.5s ease-out forwards;
-      z-index: 0;
-    }
-
-    @keyframes burstLine {
-      0% {
-        transform: translate(-50%, -50%) scaleY(0.1);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(-50%, -150%) scaleY(1) scale(1.8);
-        opacity: 0;
-      }
-    }
   </style>
 </head>
 <body class="dark-mode">
@@ -160,7 +135,6 @@
   <div class="hero">
     <div style="position: relative; display: inline-block;">
       <h1 id="rainbow-title">BETTER THAN CHIZL</h1>
-      <div id="burst-container"></div>
     </div>
     <nav class="nav">
       <a href="#MY chat">MY Chat</a>
@@ -178,23 +152,13 @@
     }
 
     const title = document.getElementById("rainbow-title");
-    const burstContainer = document.getElementById("burst-container");
 
-    function triggerRainbowAndBurst() {
+    function triggerRainbow() {
       title.classList.add("rainbow-active");
-
-      // Create 12 burst lines in a radial pattern
-      for (let i = 0; i < 12; i++) {
-        const line = document.createElement("span");
-        line.className = "burst-line";
-        line.style.transform = `rotate(${i * 30}deg) translate(-50%, -50%)`;
-        burstContainer.appendChild(line);
-        setTimeout(() => line.remove(), 500);
-      }
     }
 
-    title.addEventListener("mouseenter", triggerRainbowAndBurst);
-    title.addEventListener("click", triggerRainbowAndBurst);
+    title.addEventListener("mouseenter", triggerRainbow);
+    title.addEventListener("click", triggerRainbow);
 
     title.addEventListener("animationend", () => {
       title.classList.remove("rainbow-active");
