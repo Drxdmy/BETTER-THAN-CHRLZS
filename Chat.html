@@ -30,6 +30,7 @@
       font-size: 1.1rem;
       border-radius: 6px;
       transition: background-color 0.3s, transform 0.2s;
+      cursor: pointer;
     }
 
     .button:hover {
@@ -86,18 +87,29 @@
       opacity: 1;
       text-decoration: underline;
     }
+
+    .error-message {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #ff4d4f;
+      color: white;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      display: none;
+    }
   </style>
 </head>
 <body class="dark-mode">
 
   <div class="container">
-    <a href="find-friends.html" class="button">Find Friends</a>
-    <a href="chats.html" class="button">Chats</a>
-    <a href="profile.html" class="button">Profile</a>
+    <button class="button" onclick="showError()">Find Friends</button>
+    <button class="button" onclick="showError()">Chats</button>
+    <button class="button" onclick="showError()">Profile</button>
+
+    <div id="error" class="error-message">ERROR: Please log in or sign up to continue</div>
   </div>
 
   <a href="login.html" class="login-link">Login | Sign Up</a>
-
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
@@ -110,6 +122,11 @@
         body.classList.remove('light-mode');
         body.classList.add('dark-mode');
       }
+    }
+
+    function showError() {
+      const errorBox = document.getElementById('error');
+      errorBox.style.display = 'inline-block';
     }
   </script>
 </body>
