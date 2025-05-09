@@ -146,14 +146,38 @@
       cursor: pointer;
     }
 
-    .top-right-user span {
-      font-weight: bold;
-    }
-
     .top-right-user img {
       width: 36px;
       height: 36px;
       border-radius: 50%;
+    }
+
+    .top-right-user span {
+      font-weight: bold;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 48px;
+      right: 0;
+      background-color: #222;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      z-index: 999;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .top-right-wrapper {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+    }
+
+    .top-right-wrapper:hover .dropdown {
+      display: block;
     }
 
     .success-message {
@@ -161,15 +185,23 @@
       font-size: 1.1rem;
       color: #4CAF50;
       font-weight: bold;
+      transition: opacity 1s;
+    }
+
+    .success-fade {
+      opacity: 0;
     }
   </style>
 </head>
 <body class="dark-mode">
 
-  <!-- Username & Profile -->
-  <div class="top-right-user" id="userPanel" onclick="goToProfile()" style="display: none;">
-    <span id="usernameDisplay"></span>
-    <img src="https://www.gravatar.com/avatar?d=mp&s=36" alt="Profile" />
+  <!-- Profile & Username -->
+  <div class="top-right-wrapper" id="userPanel" style="display: none;">
+    <div class="top-right-user" onclick="goToProfile()">
+      <span id="usernameDisplay"></span>
+      <img src="https://www.gravatar.com/avatar?d=mp&s=36" alt="Profile" />
+    </div>
+    <div class="dropdown" onclick="signOut()">Sign out</div>
   </div>
 
   <div class="button-container">
@@ -184,7 +216,6 @@
 
   <div class="success-message" id="successMsg" style="display: none;">Sign in successful!</div>
 
-  <!-- Auth Links -->
   <div class="auth-links">
     <a href="login.html">Login</a>
     <span>|</span>
@@ -205,7 +236,6 @@
       const error = document.getElementById('error');
       error.style.display = 'block';
       error.classList.remove('fade-out');
-
       setTimeout(() => error.classList.add('fade-out'), 4000);
       setTimeout(() => error.style.display = 'none', 5000);
     }
@@ -218,7 +248,6 @@
         error.textContent = "Please sign out to use this feature.";
         error.style.display = "block";
         error.classList.remove("fade-out");
-
         setTimeout(() => error.classList.add("fade-out"), 4000);
         setTimeout(() => error.style.display = "none", 5000);
       } else {
@@ -230,12 +259,27 @@
       window.location.href = "profile.html";
     }
 
+    function signOut() {
+      localStorage.removeItem("currentUser");
+      sessionStorage.removeItem("justLoggedIn");
+      window.location.href = "login.html";
+    }
+
     window.onload = function () {
       const currentUser = localStorage.getItem("currentUser");
+      const justLoggedIn = sessionStorage.getItem("justLoggedIn");
+
       if (currentUser) {
-        document.getElementById("userPanel").style.display = "flex";
+        document.getElementById("userPanel").style.display = "block";
         document.getElementById("usernameDisplay").textContent = currentUser;
-        document.getElementById("successMsg").style.display = "block";
+
+        if (justLoggedIn === "true") {
+          const success = document.getElementById("successMsg");
+          success.style.display = "block";
+          setTimeout(() => success.classList.add("success-fade"), 3000);
+          setTimeout(() => success.style.display = "none", 4000);
+          sessionStorage.removeItem("justLoggedIn");
+        }
       }
     };
   </script>
