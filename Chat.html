@@ -8,6 +8,7 @@
     body {
       font-family: Arial, sans-serif;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -68,6 +69,23 @@
     .toggle-btn:hover {
       background-color: #555;
     }
+
+    .login-link {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.9rem;
+      color: inherit;
+      text-decoration: none;
+      opacity: 0.7;
+      transition: opacity 0.2s, text-decoration 0.2s;
+    }
+
+    .login-link:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body class="dark-mode">
@@ -77,6 +95,8 @@
     <a href="chats.html" class="button">Chats</a>
     <a href="profile.html" class="button">Profile</a>
   </div>
+
+  <a href="login.html" class="login-link">Login | Sign Up</a>
 
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
