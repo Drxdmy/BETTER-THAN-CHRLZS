@@ -46,6 +46,8 @@
     .hero h1 {
       font-size: 3rem;
       margin-bottom: 20px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
     }
 
     .nav {
@@ -69,7 +71,7 @@
       background: var(--nav-hover);
     }
 
-    /* Dark/Light toggle button */
+    /* Toggle button */
     .toggle-btn {
       position: fixed;
       bottom: 20px;
@@ -110,12 +112,28 @@
     .external-link:hover {
       background-color: var(--nav-hover);
     }
+
+    /* Rainbow strobe animation */
+    @keyframes rainbowStrobe {
+      0%   { color: red;     transform: scale(1); }
+      14%  { color: orange;  transform: scale(1.1); }
+      28%  { color: yellow;  transform: scale(1.15); }
+      42%  { color: green;   transform: scale(1.2); }
+      57%  { color: blue;    transform: scale(1.15); }
+      71%  { color: indigo;  transform: scale(1.1); }
+      85%  { color: violet;  transform: scale(1.05); }
+      100% { color: red;     transform: scale(1); }
+    }
+
+    .rainbow-active {
+      animation: rainbowStrobe 1.2s ease-in-out;
+    }
   </style>
 </head>
 <body class="dark-mode">
 
   <div class="hero">
-    <h1>BETTER THAN CHIZL</h1>
+    <h1 id="rainbow-title">BETTER THAN CHIZL</h1>
     <nav class="nav">
       <a href="#MY chat">MY Chat</a>
       <a href="#contact">Contact</a>
@@ -130,6 +148,23 @@
     function toggleMode() {
       document.body.classList.toggle('dark-mode');
     }
+
+    const title = document.getElementById("rainbow-title");
+
+    // Hover for desktop
+    title.addEventListener("mouseenter", () => {
+      title.classList.add("rainbow-active");
+    });
+
+    // Click for mobile
+    title.addEventListener("click", () => {
+      title.classList.add("rainbow-active");
+    });
+
+    // Remove after animation so it can re-trigger
+    title.addEventListener("animationend", () => {
+      title.classList.remove("rainbow-active");
+    });
   </script>
 </body>
 </html>
