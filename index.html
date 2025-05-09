@@ -48,6 +48,8 @@
       margin-bottom: 20px;
       cursor: pointer;
       transition: transform 0.3s ease;
+      position: relative;
+      z-index: 1;
     }
 
     .nav {
@@ -126,14 +128,54 @@
     }
 
     .rainbow-active {
-      animation: rainbowStrobe 1.2s ease-in-out;
+      animation: rainbowStrobe 0.6s ease-in-out;
+    }
+
+    /* Burst container */
+    .burst-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .burst-container::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 150%;
+      height: 150%;
+      pointer-events: none;
+      background: radial-gradient(circle, white 1px, transparent 1px);
+      background-size: 10px 10px;
+      background-repeat: repeat;
+      animation: burst 0.4s ease-out forwards;
+      opacity: 0.8;
+      transform: translate(-50%, -50%) scale(0.3);
+      z-index: 0;
+    }
+
+    .burst-disabled::after {
+      animation: none !important;
+    }
+
+    @keyframes burst {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.3);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5);
+      }
     }
   </style>
 </head>
 <body class="dark-mode">
 
   <div class="hero">
-    <h1 id="rainbow-title">BETTER THAN CHIZL</h1>
+    <div class="burst-container burst-disabled" id="burst">
+      <h1 id="rainbow-title">BETTER THAN CHIZL</h1>
+    </div>
     <nav class="nav">
       <a href="#MY chat">MY Chat</a>
       <a href="#contact">Contact</a>
@@ -150,18 +192,22 @@
     }
 
     const title = document.getElementById("rainbow-title");
+    const burst = document.getElementById("burst");
 
-    // Hover for desktop
-    title.addEventListener("mouseenter", () => {
+    function triggerRainbowAndBurst() {
+      // Trigger text animation
       title.classList.add("rainbow-active");
-    });
 
-    // Click for mobile
-    title.addEventListener("click", () => {
-      title.classList.add("rainbow-active");
-    });
+      // Trigger burst by reflow
+      burst.classList.remove("burst-disabled");
+      void burst.offsetWidth; // force reflow
+      burst.classList.add("burst-disabled");
+    }
 
-    // Remove after animation so it can re-trigger
+    // Events for both hover and click
+    title.addEventListener("mouseenter", triggerRainbowAndBurst);
+    title.addEventListener("click", triggerRainbowAndBurst);
+
     title.addEventListener("animationend", () => {
       title.classList.remove("rainbow-active");
     });
