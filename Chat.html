@@ -152,37 +152,41 @@
       height: 40px;
       border-radius: 50%;
       background-color: gray;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
     }
 
     .dropdown {
       display: none;
-      flex-direction: column;
-      gap: 10px;
       position: absolute;
       top: 50px;
       right: 0;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      min-width: 150px;
     }
 
     .dropdown-button {
-      padding: 8px 20px;
-      background-color: #ff4d4f;
+      padding: 12px 25px;
+      background-color: #007BFF;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       text-align: center;
+      width: 100%;
+      font-size: 1.1rem;
+      transition: background-color 0.3s, transform 0.2s;
     }
 
     .dropdown-button:hover {
-      background-color: #e03e3e;
+      background-color: #0056b3;
+      transform: scale(1.05);
     }
 
     .profile-container:hover .dropdown {
-      display: flex;
+      display: block;
     }
   </style>
 </head>
@@ -203,7 +207,7 @@
   </div>
 
   <!-- Profile Icon with dropdown -->
-  <div class="profile-container" id="profile-container">
+  <div class="profile-container" id="profile-container" style="display: none;">
     <div class="profile-img"></div>
     <div class="dropdown">
       <button class="dropdown-button" onclick="signOut()">Sign Out</button>
@@ -221,6 +225,9 @@
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
+    // Track if we should show error on page load
+    let showErrorOnLoad = localStorage.getItem('showErrorOnLoad') === 'true';
+    
     // Detect if user is signed in
     function checkLoginStatus() {
       const currentUser = localStorage.getItem("currentUser");
@@ -234,9 +241,15 @@
         
         // Hide login/signup links
         setTimeout(() => document.getElementById("sign-in-success").style.display = "none", 4000);
-      } else {
+      } else if (showErrorOnLoad) {
+        // Only show error if we've set the flag
         document.getElementById("error").style.display = "block";
-        setTimeout(() => document.getElementById("error").style.display = "none", 4000);
+        setTimeout(() => {
+          document.getElementById("error").classList.add("fade-out");
+          setTimeout(() => document.getElementById("error").style.display = "none", 1000);
+        }, 4000);
+        // Reset the flag
+        localStorage.setItem('showErrorOnLoad', 'false');
       }
     }
 
@@ -256,6 +269,9 @@
 
     // Show error message
     function showError() {
+      // Set flag so error will show if page is refreshed
+      localStorage.setItem('showErrorOnLoad', 'true');
+      
       const error = document.getElementById('error');
       error.style.display = 'block';
       error.classList.remove('fade-out');
