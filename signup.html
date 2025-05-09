@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #f4f4f4;
+      color: black;
+    }
+
+    .form-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.6rem;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-size: 1rem;
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
+
+    .button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007BFF;
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .back-link {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      font-size: 1rem;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="chat.html" class="back-link">← Back</a>
+
+  <div class="form-container">
+    <h2>Sign Up</h2>
+
+    <!-- Username Input -->
+    <div class="form-group">
+      <label for="username">Enter a Username</label>
+      <input type="text" id="username" placeholder="Username" />
+    </div>
+
+    <!-- Password Input -->
+    <div class="form-group">
+      <label for="password">Enter a Password</label>
+      <input type="password" id="password" placeholder="Password" />
+    </div>
+
+    <button class="button" onclick="signUp()">Sign Up</button>
+  </div>
+
+  <script>
+    function signUp() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      if (username && password) {
+        alert('Sign up successful!'); // For now, just a simple success alert
+      } else {
+        alert('Please fill out both fields.');
+      }
+    }
+  </script>
+
+</body>
+</html>
 
