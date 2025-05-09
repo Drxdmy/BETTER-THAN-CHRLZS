@@ -136,7 +136,7 @@
       text-decoration: underline;
     }
 
-    /* Profile dropdown styles */
+    /* Profile section styles */
     .profile-wrapper {
       position: fixed;
       top: 20px;
@@ -144,9 +144,10 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      z-index: 100;
     }
 
-    .profile-info {
+    .profile-area {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -156,7 +157,7 @@
       transition: background-color 0.2s;
     }
 
-    .profile-info:hover {
+    .profile-area:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
 
@@ -168,12 +169,16 @@
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background-color: #007BFF;
+      background-color: #e0e0e0;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-weight: bold;
+      color: #757575;
+      font-size: 14px;
+    }
+
+    .profile-icon i {
+      font-style: normal;
     }
 
     .dropdown-menu {
@@ -188,7 +193,6 @@
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s, visibility 0.3s;
-      z-index: 100;
     }
 
     .profile-wrapper:hover .dropdown-menu {
@@ -210,19 +214,6 @@
     .dropdown-menu button:hover {
       background-color: #007BFF;
     }
-
-    /* Auto-hide dropdown after inactivity */
-    .profile-wrapper:hover ~ .dropdown-auto-hide {
-      opacity: 1;
-      visibility: visible;
-      transition-delay: 0s;
-    }
-
-    .dropdown-auto-hide {
-      transition-delay: 5s;
-      opacity: 0;
-      visibility: hidden;
-    }
   </style>
 </head>
 <body class="dark-mode">
@@ -240,13 +231,14 @@
     </div>
   </div>
 
-  <!-- Profile section with dropdown -->
+  <!-- Profile section -->
   <div class="profile-wrapper" id="profile-wrapper" style="display: none;">
-    <div class="profile-info" id="profile-info">
-      <div class="profile-icon" id="profile-icon"></div>
+    <div class="profile-area" onclick="goToProfile()">
+      <div class="profile-icon"><i>👤</i></div>
       <span class="username" id="username-display"></span>
     </div>
-    <div class="dropdown-menu dropdown-auto-hide">
+    <div class="dropdown-menu">
+      <button onclick="goToProfile()">Profile</button>
       <button onclick="signOut()">Sign Out</button>
     </div>
   </div>
@@ -264,7 +256,6 @@
   <script>
     // Track if we should show error on page load
     let showErrorOnLoad = localStorage.getItem('showErrorOnLoad') === 'true';
-    let dropdownHideTimeout;
     
     // Detect if user is signed in
     function checkLoginStatus() {
@@ -274,7 +265,6 @@
         // Show profile section
         document.getElementById("profile-wrapper").style.display = "flex";
         document.getElementById("username-display").textContent = currentUser;
-        document.getElementById("profile-icon").textContent = currentUser.charAt(0).toUpperCase();
         
         // Show "Sign in successful" message and hide auth links
         document.getElementById("sign-in-success").style.display = "block";
@@ -282,9 +272,6 @@
         
         // Hide login/signup links
         setTimeout(() => document.getElementById("sign-in-success").style.display = "none", 4000);
-        
-        // Setup dropdown auto-hide
-        setupDropdownAutoHide();
       } else if (showErrorOnLoad) {
         // Only show error if we've set the flag
         document.getElementById("error").style.display = "block";
@@ -295,22 +282,6 @@
         // Reset the flag
         localStorage.setItem('showErrorOnLoad', 'false');
       }
-    }
-    
-    function setupDropdownAutoHide() {
-      const profileWrapper = document.getElementById("profile-wrapper");
-      const dropdown = document.querySelector(".dropdown-menu");
-      
-      profileWrapper.addEventListener("mouseenter", () => {
-        clearTimeout(dropdownHideTimeout);
-        dropdown.classList.remove("dropdown-auto-hide");
-      });
-      
-      profileWrapper.addEventListener("mouseleave", () => {
-        dropdownHideTimeout = setTimeout(() => {
-          dropdown.classList.add("dropdown-auto-hide");
-        }, 5000); // 5 seconds delay
-      });
     }
 
     // Toggle between light and dark mode
@@ -325,6 +296,11 @@
       localStorage.removeItem("currentUser");
       sessionStorage.removeItem("justLoggedIn");
       window.location.reload();
+    }
+
+    // Go to profile page
+    function goToProfile() {
+      window.location.href = "profile.html";
     }
 
     // Show error message
