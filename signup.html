@@ -13,12 +13,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background-color: #f4f4f4;
-      color: black;
+      background-color: #333;
+      color: white;
     }
 
     .form-container {
-      background-color: white;
+      background-color: #444;
       padding: 30px;
       border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -30,7 +30,7 @@
       margin-bottom: 20px;
       text-align: center;
       font-size: 1.6rem;
-      color: #333;
+      color: #fff;
     }
 
     .form-group {
@@ -41,7 +41,7 @@
       font-size: 1rem;
       display: block;
       margin-bottom: 5px;
-      color: #333;
+      color: #fff;
     }
 
     input {
@@ -51,6 +51,8 @@
       border-radius: 4px;
       font-size: 1rem;
       box-sizing: border-box;
+      background-color: #555;
+      color: white;
     }
 
     input:focus {
@@ -80,18 +82,59 @@
       top: 20px;
       left: 20px;
       font-size: 1rem;
-      color: inherit;
+      color: white;
       text-decoration: none;
     }
 
     .back-link:hover {
       text-decoration: underline;
     }
+
+    /* Light/Dark Mode Button */
+    .mode-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #fff;
+      color: #333;
+      border-radius: 50%;
+      padding: 10px;
+      cursor: pointer;
+      border: none;
+      font-size: 1.5rem;
+    }
+
+    .mode-toggle:hover {
+      background-color: #ccc;
+    }
+
+    /* Light Mode Styles */
+    .light-mode {
+      background-color: #f4f4f4;
+      color: black;
+    }
+
+    .light-mode .form-container {
+      background-color: #fff;
+    }
+
+    .light-mode input {
+      background-color: #fff;
+      color: black;
+    }
+
+    .light-mode .button {
+      background-color: #007BFF;
+    }
+
+    .light-mode .back-link {
+      color: #333;
+    }
   </style>
 </head>
-<body>
+<body class="dark-mode">
 
-  <a href="Chat" class="back-link">← Back</a>
+  <a href="chat.html" class="back-link">← Back</a>
 
   <div class="form-container">
     <h2>Sign Up</h2>
@@ -111,6 +154,8 @@
     <button class="button" onclick="signUp()">Sign Up</button>
   </div>
 
+  <button class="mode-toggle" onclick="toggleMode()">🌙</button>
+
   <script>
     function signUp() {
       const username = document.getElementById('username').value;
@@ -122,8 +167,21 @@
         alert('Please fill out both fields.');
       }
     }
+
+    function toggleMode() {
+      const body = document.body;
+      const modeButton = document.querySelector('.mode-toggle');
+      
+      body.classList.toggle('light-mode');
+      body.classList.toggle('dark-mode');
+
+      if (body.classList.contains('light-mode')) {
+        modeButton.textContent = '🌙'; // Moon icon for dark mode
+      } else {
+        modeButton.textContent = '🌞'; // Sun icon for light mode
+      }
+    }
   </script>
 
 </body>
 </html>
-
