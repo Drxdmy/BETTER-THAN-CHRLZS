@@ -5,226 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up</title>
   <style>
-    :root {
-      --bg-color: #121212;
-      --text-color: white;
-      --form-bg: #1e1e1e;
-      --input-bg: #2c2c2c;
-      --input-border: #444;
-      --button-bg: #007BFF;
-      --button-hover: #0056b3;
-      --link-color: white;
-      --error-color: #ff4d4d;
-    }
-
-    body.light-mode {
-      --bg-color: #f4f4f4;
-      --text-color: black;
-      --form-bg: #ffffff;
-      --input-bg: #ffffff;
-      --input-border: #ccc;
-      --button-bg: #007BFF;
-      --button-hover: #0056b3;
-      --link-color: #333;
-    }
-
     body {
+      background-color: #121212;
+      color: white;
       font-family: Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
       height: 100vh;
       margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.3s ease, color 0.3s ease;
     }
-
-    .form-container {
-      background-color: var(--form-bg);
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 400px;
-      transition: background-color 0.3s ease;
+    .signup-box {
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      width: 300px;
     }
-
-    .form-container h2 {
-      margin-bottom: 20px;
+    h2 {
       text-align: center;
-      font-size: 1.6rem;
+      margin-bottom: 24px;
     }
-
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
-
     label {
       display: block;
       margin-bottom: 6px;
-      font-size: 1rem;
     }
-
     input {
       width: 100%;
-      padding: 12px 15px;
-      font-size: 1rem;
-      background-color: var(--input-bg);
-      color: var(--text-color);
-      border: 1px solid var(--input-border);
-      border-radius: 6px;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #2a2a2a;
+      color: white;
       box-sizing: border-box;
-      transition: border-color 0.3s, background-color 0.3s;
     }
-
-    input:focus {
-      border-color: var(--button-bg);
-      outline: none;
-    }
-
-    .error {
-      color: var(--error-color);
-      font-size: 0.9rem;
-      margin-top: 5px;
-    }
-
-    .button {
+    .signup-button {
       width: 100%;
       padding: 12px;
-      background-color: var(--button-bg);
-      color: white;
-      font-size: 1.1rem;
+      background-color: #4CAF50;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
       cursor: pointer;
-      margin-top: 20px;
-      transition: background-color 0.3s;
+      margin-top: 10px;
     }
-
-    .button:hover {
-      background-color: var(--button-hover);
+    .signup-button:hover {
+      background-color: #45a049;
     }
-
     .back-link {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      font-size: 1rem;
-      color: var(--link-color);
-      text-decoration: none;
-      opacity: 0.8;
-    }
-
-    .back-link:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-
-    .toggle-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: none;
-      background-color: #333;
+      display: block;
+      margin-top: 20px;
+      text-align: center;
       color: white;
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.3s;
+      text-decoration: none;
     }
-
-    .toggle-btn:hover {
-      background-color: #555;
+    #error-message {
+      color: #ff4d4f;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
     }
   </style>
 </head>
-<body class="dark-mode">
-
-  <a href="Chat" class="back-link">← Back</a>
-
-  <div class="form-container">
+<body>
+  <div class="signup-box">
     <h2>Sign Up</h2>
-
     <div class="form-group">
       <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Username" />
-      <div id="username-error" class="error"></div>
+      <input type="text" id="username" placeholder="Enter username"/>
     </div>
-
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Password" />
-      <div id="password-error" class="error"></div>
+      <input type="password" id="password" placeholder="Enter password"/>
     </div>
-
     <div class="form-group">
       <label for="confirm-password">Confirm Password</label>
-      <input type="password" id="confirm-password" placeholder="Re-enter Password" />
-      <div id="confirm-error" class="error"></div>
+      <input type="password" id="confirm-password" placeholder="Re-enter password"/>
     </div>
-
-    <button class="button" onclick="signUp()">Sign Up</button>
+    <div id="error-message"></div>
+    <button class="signup-button" onclick="signUp()">Sign Up</button>
+    <a href="Chat" class="back-link">← Back</a>
   </div>
 
-  <button class="toggle-btn" onclick="toggleMode()">🌙</button>
-
   <script>
-    function toggleMode() {
-      const body = document.body;
-      body.classList.toggle('light-mode');
-      body.classList.toggle('dark-mode');
-
-      const toggleBtn = document.querySelector('.toggle-btn');
-      toggleBtn.textContent = body.classList.contains('light-mode') ? '🌞' : '🌙';
-    }
-
     function signUp() {
-      // Grab values
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
 
-      // Error elements
-      const usernameErr = document.getElementById('username-error');
-      const passwordErr = document.getElementById('password-error');
-      const confirmErr = document.getElementById('confirm-error');
-
-      // Reset errors
-      usernameErr.textContent = '';
-      passwordErr.textContent = '';
-      confirmErr.textContent = '';
-
-      // Validation
-      let isValid = true;
-
-      if (!username) {
-        usernameErr.textContent = 'Username is required.';
-        isValid = false;
+      if (!username || !password || !confirmPassword) {
+        showError('All fields are required.');
+        return;
       }
 
-      if (!password) {
-        passwordErr.textContent = 'Password is required.';
-        isValid = false;
+      if (password !== confirmPassword) {
+        showError('Passwords do not match.');
+        return;
       }
 
-      if (password && confirmPassword !== password) {
-        confirmErr.textContent = 'Passwords do not match.';
-        isValid = false;
+      let users = JSON.parse(localStorage.getItem('users') || '{}');
+
+      if (users[username]) {
+        showError('Username already in use, please try again.');
+        return;
       }
 
-      // If valid, store in localStorage and redirect
-      if (isValid) {
-        localStorage.setItem('chatAppUsername', username);
-        localStorage.setItem('chatAppPassword', password);
-        window.location.href = 'Chat';
-      }
+      users[username] = password;
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('currentUser', username);
+      window.location.href = 'Chat';
+    }
+
+    function showError(msg) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+      setTimeout(() => errorEl.style.display = 'none', 4000);
     }
   </script>
 </body>
