@@ -1,70 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat</title>
+  <title>Chat App</title>
   <style>
     body {
-      background-color: #1a1a1a;
+      background-color: #121212;
       color: white;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
-    #sign-in-message {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: lime;
-      font-size: 1rem;
-      display: none;
+    .navbar {
+      background-color: #1f1f1f;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+    .navbar-title {
+      font-size: 24px;
+      font-weight: bold;
     }
     .user-info {
-      position: fixed;
-      top: 20px;
-      right: 20px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .user-info span {
+    #username-display {
       font-weight: bold;
     }
     .profile-pic {
       width: 36px;
       height: 36px;
       border-radius: 50%;
+      cursor: pointer;
+    }
+    #sign-in-message {
+      text-align: center;
+      color: lime;
+      margin-top: 10px;
+      display: none;
     }
     .chat-container {
-      padding: 80px 20px 20px 20px;
+      padding: 20px;
     }
   </style>
 </head>
 <body>
-  <div id="sign-in-message">Sign in successful!</div>
-
-  <div class="user-info">
-    <span id="user-display"></span>
-    <a href="profile.html">
-      <img src="https://www.gravatar.com/avatar?d=mp&s=36" class="profile-pic" alt="Profile"/>
-    </a>
+  <div class="navbar">
+    <div class="navbar-title">Chat App</div>
+    <div class="user-info">
+      <span id="username-display"></span>
+      <a href="profile.html">
+        <img src="https://www.gravatar.com/avatar?d=mp&s=36" class="profile-pic" alt="Profile" />
+      </a>
+    </div>
   </div>
 
+  <div id="sign-in-message">Sign in successful!</div>
+
   <div class="chat-container">
-    <h1>Welcome to the Chat</h1>
-    <!-- Chat UI goes here -->
+    <h2>Welcome to the chat room!</h2>
+    <!-- Chat messages and input will go here -->
   </div>
 
   <script>
     window.onload = function () {
-      const username = localStorage.getItem('currentUser');
-      if (username) {
-        document.getElementById('user-display').textContent = username;
-        document.getElementById('sign-in-message').style.display = 'block';
+      const currentUser = localStorage.getItem('currentUser');
+      const usernameDisplay = document.getElementById('username-display');
+      const signInMessage = document.getElementById('sign-in-message');
+
+      if (currentUser) {
+        usernameDisplay.textContent = currentUser;
+        signInMessage.style.display = 'block';
         setTimeout(() => {
-          document.getElementById('sign-in-message').style.display = 'none';
+          signInMessage.style.display = 'none';
         }, 4000);
       }
     };
