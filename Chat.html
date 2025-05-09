@@ -11,7 +11,8 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f4f4f4;
+      margin: 0;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     .container {
@@ -20,23 +21,56 @@
 
     .button {
       display: inline-block;
-      padding: 15px 30px;
-      margin: 20px;
+      padding: 12px 25px;
+      margin: 10px;
       background-color: #007BFF;
       color: white;
       text-decoration: none;
-      font-size: 1.2rem;
-      border-radius: 8px;
+      font-size: 1.1rem;
+      border-radius: 6px;
       transition: background-color 0.3s, transform 0.2s;
     }
 
     .button:hover {
       background-color: #0056b3;
-      transform: scale(1.1);
+      transform: scale(1.05);
+    }
+
+    /* Light/Dark mode styles */
+    body.dark-mode {
+      background-color: #121212;
+      color: white;
+    }
+
+    body.light-mode {
+      background-color: #f4f4f4;
+      color: black;
+    }
+
+    .toggle-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background-color: #333;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+    }
+
+    .toggle-btn:hover {
+      background-color: #555;
     }
   </style>
 </head>
-<body>
+<body class="dark-mode">
 
   <div class="container">
     <h1>Welcome to Chat</h1>
@@ -45,6 +79,19 @@
     <a href="profile.html" class="button">Profile</a>
   </div>
 
+  <button class="toggle-btn" onclick="toggleMode()">🌙</button>
+
+  <script>
+    function toggleMode() {
+      const body = document.body;
+      if (body.classList.contains('dark-mode')) {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+      } else {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+      }
+    }
+  </script>
 </body>
 </html>
-
