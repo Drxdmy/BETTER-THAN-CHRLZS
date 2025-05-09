@@ -13,26 +13,32 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background-color: #333;
-      color: white;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
+    body.dark-mode {
+      background-color: #333;
+      color: white;
+    }
+
+    body.light-mode {
+      background-color: #f4f4f4;
+      color: black;
+    }
+
     .form-container {
-      background-color: #444;
+      background-color: inherit;
       padding: 30px;
       border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 400px;
-      transition: background-color 0.3s ease;
     }
 
     .form-container h2 {
       margin-bottom: 20px;
       text-align: center;
       font-size: 1.6rem;
-      color: #fff;
     }
 
     .form-group {
@@ -43,7 +49,6 @@
       font-size: 1rem;
       display: block;
       margin-bottom: 5px;
-      color: #fff;
     }
 
     input {
@@ -58,6 +63,11 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
+    body.light-mode input {
+      background-color: white;
+      color: black;
+    }
+
     input:focus {
       border-color: #007BFF;
       outline: none;
@@ -68,12 +78,12 @@
       padding: 12px;
       background-color: #007BFF;
       color: white;
-      text-decoration: none;
       font-size: 1.1rem;
       border-radius: 6px;
       cursor: pointer;
       text-align: center;
       margin-top: 20px;
+      border: none;
       transition: background-color 0.3s ease;
     }
 
@@ -86,53 +96,40 @@
       top: 20px;
       left: 20px;
       font-size: 1rem;
-      color: white;
       text-decoration: none;
+      opacity: 0.8;
     }
 
     .back-link:hover {
       text-decoration: underline;
+      opacity: 1;
     }
 
-    /* Light/Dark Mode Button */
-    .mode-toggle {
+    .toggle-btn {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background-color: #fff;
-      color: #333;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      padding: 10px;
-      cursor: pointer;
       border: none;
-      font-size: 1.5rem;
+      background-color: #333;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
     }
 
-    .mode-toggle:hover {
-      background-color: #ccc;
+    .toggle-btn:hover {
+      background-color: #555;
     }
 
-    /* Light Mode Styles */
-    .light-mode {
-      background-color: #f4f4f4;
+    body.light-mode .toggle-btn {
+      background-color: #ddd;
       color: black;
-    }
-
-    .light-mode .form-container {
-      background-color: #fff;
-    }
-
-    .light-mode input {
-      background-color: #fff;
-      color: black;
-    }
-
-    .light-mode .button {
-      background-color: #007BFF;
-    }
-
-    .light-mode .back-link {
-      color: #333;
     }
   </style>
 </head>
@@ -143,13 +140,11 @@
   <div class="form-container">
     <h2>Sign Up</h2>
 
-    <!-- Username Input -->
     <div class="form-group">
       <label for="username">Enter a Username</label>
       <input type="text" id="username" placeholder="Username" />
     </div>
 
-    <!-- Password Input -->
     <div class="form-group">
       <label for="password">Enter a Password</label>
       <input type="password" id="password" placeholder="Password" />
@@ -158,7 +153,7 @@
     <button class="button" onclick="signUp()">Sign Up</button>
   </div>
 
-  <button class="mode-toggle" onclick="toggleMode()">🌙</button>
+  <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
     function signUp() {
@@ -166,7 +161,7 @@
       const password = document.getElementById('password').value;
 
       if (username && password) {
-        alert('Sign up successful!'); // For now, just a simple success alert
+        alert('Sign up successful!');
       } else {
         alert('Please fill out both fields.');
       }
@@ -174,16 +169,8 @@
 
     function toggleMode() {
       const body = document.body;
-      const modeButton = document.querySelector('.mode-toggle');
-      
-      body.classList.toggle('light-mode');
       body.classList.toggle('dark-mode');
-
-      if (body.classList.contains('light-mode')) {
-        modeButton.textContent = '🌙'; // Moon icon for dark mode
-      } else {
-        modeButton.textContent = '🌞'; // Sun icon for light mode
-      }
+      body.classList.toggle('light-mode');
     }
   </script>
 
