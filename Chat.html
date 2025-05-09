@@ -1,131 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up</title>
+  <title>Chat</title>
   <style>
     body {
-      background-color: #121212;
+      background-color: #1a1a1a;
       color: white;
       font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
+      padding: 0;
     }
-    .signup-box {
-      background-color: #1e1e1e;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-      width: 300px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .form-group {
-      margin-bottom: 18px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-    }
-    input {
-      width: 100%;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 8px;
-      background-color: #2a2a2a;
-      color: white;
-      box-sizing: border-box;
-    }
-    .signup-button {
-      width: 100%;
-      padding: 12px;
-      background-color: #4CAF50;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .signup-button:hover {
-      background-color: #45a049;
-    }
-    .back-link {
-      display: block;
-      margin-top: 20px;
-      text-align: center;
-      color: white;
-      text-decoration: none;
-    }
-    #error-message {
-      color: #ff4d4f;
-      margin-top: 10px;
-      text-align: center;
+    #sign-in-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: lime;
+      font-size: 1rem;
       display: none;
+    }
+    .user-info {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-info span {
+      font-weight: bold;
+    }
+    .profile-pic {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+    .chat-container {
+      padding: 80px 20px 20px 20px;
     }
   </style>
 </head>
 <body>
-  <div class="signup-box">
-    <h2>Sign Up</h2>
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Enter username"/>
-    </div>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter password"/>
-    </div>
-    <div class="form-group">
-      <label for="confirm-password">Confirm Password</label>
-      <input type="password" id="confirm-password" placeholder="Re-enter password"/>
-    </div>
-    <div id="error-message"></div>
-    <button class="signup-button" onclick="signUp()">Sign Up</button>
-    <a href="Chat" class="back-link">← Back</a>
+  <div id="sign-in-message">Sign in successful!</div>
+
+  <div class="user-info">
+    <span id="user-display"></span>
+    <a href="profile.html">
+      <img src="https://www.gravatar.com/avatar?d=mp&s=36" class="profile-pic" alt="Profile"/>
+    </a>
+  </div>
+
+  <div class="chat-container">
+    <h1>Welcome to the Chat</h1>
+    <!-- Chat UI goes here -->
   </div>
 
   <script>
-    function signUp() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-
-      if (!username || !password || !confirmPassword) {
-        showError('All fields are required.');
-        return;
+    window.onload = function () {
+      const username = localStorage.getItem('currentUser');
+      if (username) {
+        document.getElementById('user-display').textContent = username;
+        document.getElementById('sign-in-message').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('sign-in-message').style.display = 'none';
+        }, 4000);
       }
-
-      if (password !== confirmPassword) {
-        showError('Passwords do not match.');
-        return;
-      }
-
-      let users = JSON.parse(localStorage.getItem('users') || '{}');
-
-      if (users[username]) {
-        showError('Username already in use, please try again.');
-        return;
-      }
-
-      users[username] = password;
-      localStorage.setItem('users', JSON.stringify(users));
-      localStorage.setItem('currentUser', username);
-      window.location.href = 'Chat';
-    }
-
-    function showError(msg) {
-      const errorEl = document.getElementById('error-message');
-      errorEl.textContent = msg;
-      errorEl.style.display = 'block';
-      setTimeout(() => errorEl.style.display = 'none', 4000);
-    }
+    };
   </script>
 </body>
 </html>
