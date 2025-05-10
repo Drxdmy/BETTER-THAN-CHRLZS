@@ -1,1 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
 
+    body.light-mode {
+      background-color: #f4f4f4;
+      color: black;
+    }
+
+    .login-box {
+      background-color: #1e1e1e;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      width: 300px;
+    }
+
+    body.light-mode .login-box {
+      background-color: #ffffff;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #2a2a2a;
+      color: white;
+      box-sizing: border-box;
+    }
+
+    body.light-mode input {
+      background-color: #f0f0f0;
+      color: black;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .login-button:hover {
+      background-color: #0056b3;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: white;
+      text-decoration: none;
+    }
+
+    body.light-mode .back-link {
+      color: black;
+    }
+
+    #error-message {
+      color: #ff4d4f;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
+
+    .toggle-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background-color: #333;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+    }
+
+    .toggle-btn:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="login-box">
+    <h2>Login</h2>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter username" autocomplete="username"/>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter password" autocomplete="current-password"/>
+    </div>
+    <div id="error-message"></div>
+    <button class="login-button" onclick="login()">Login</button>
+    <a href="Chat" class="back-link">← Back to Chat</a>
+  </div>
+
+  <button class="toggle-btn" onclick="toggleMode()">🌙</button>
+
+  <script>
+    // Toggle between light and dark mode
+    function toggleMode() {
+      const body = document.body;
+      body.classList.toggle('dark-mode');
+      body.classList.toggle('light-mode');
+      localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+    }
+
+    // Initialize dark mode preference
+    function initDarkMode() {
+      const darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'false') {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+      }
+    }
+
+    // Login function
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('error-message');
+
+      // Get stored users
+      const users = JSON.parse(localStorage.getItem('users') || {};
+
+      if (!username || !password) {
+        showError('Please enter both username and password');
+        return;
+      }
+
+      if (!users[username]) {
+        showError('Username not found');
+        return;
+      }
+
+      if (users[username] !== password) {
+        showError('Incorrect password');
+        return;
+      }
+
+      // Successful login
+      localStorage.setItem('currentUser', username);
+      sessionStorage.setItem('justLoggedIn', 'true');
+      window.location.href = 'Chat';
+    }
+
+    // Show error message
+    function showError(msg) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+      setTimeout(() => errorEl.style.display = 'none', 4000);
+    }
+
+    // Allow login on Enter key
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        login();
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      initDarkMode();
+      
+      // If already logged in, redirect to chat
+      if (localStorage.getItem('currentUser')) {
+        window.location.href = 'Chat';
+      }
+    });
+  </script>
+</body>
+</html>
