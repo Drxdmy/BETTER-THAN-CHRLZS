@@ -136,7 +136,7 @@
     </div>
     <div id="error-message"></div>
     <button class="login-button" onclick="login()">Login</button>
-    <a href="chat.html" class="back-link">← Back to Chat</a>
+    <a href="Chat" class="back-link">← Back to Chat</a>
   </div>
 
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
@@ -195,7 +195,7 @@
       // Successful login
       localStorage.setItem('currentUser', username);
       sessionStorage.setItem('justLoggedIn', 'true');
-      window.location.href = 'chat.html'; // Explicit file reference
+      window.location.href = 'Chat'; // Explicit file reference
     }
 
     // Show error message
@@ -221,7 +221,7 @@
       
       // If already logged in, redirect to chat
       if (localStorage.getItem('currentUser')) {
-        window.location.href = 'chat.html';
+        window.location.href = 'Chat';
       }
       
       // Debugging: Log stored users
