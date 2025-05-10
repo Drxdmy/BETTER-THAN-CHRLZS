@@ -136,7 +136,7 @@
     </div>
     <div id="error-message"></div>
     <button class="login-button" onclick="login()">Login</button>
-    <a href="Chat" class="back-link">← Back to Chat</a>
+    <a href="chat.html" class="back-link">← Back to Chat</a>
   </div>
 
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
@@ -159,15 +159,24 @@
       }
     }
 
-    // Login function
+    // Login function - Fixed version
     function login() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
       const errorEl = document.getElementById('error-message');
 
       // Get stored users
-      const users = JSON.parse(localStorage.getItem('users') || {};
+      const storedUsers = localStorage.getItem('users');
+      
+      // Check if any users exist
+      if (!storedUsers) {
+        showError('No accounts exist. Please sign up first.');
+        return;
+      }
 
+      const users = JSON.parse(storedUsers);
+
+      // Validate inputs
       if (!username || !password) {
         showError('Please enter both username and password');
         return;
@@ -186,7 +195,7 @@
       // Successful login
       localStorage.setItem('currentUser', username);
       sessionStorage.setItem('justLoggedIn', 'true');
-      window.location.href = 'Chat';
+      window.location.href = 'chat.html'; // Explicit file reference
     }
 
     // Show error message
@@ -194,11 +203,13 @@
       const errorEl = document.getElementById('error-message');
       errorEl.textContent = msg;
       errorEl.style.display = 'block';
-      setTimeout(() => errorEl.style.display = 'none', 4000);
+      setTimeout(() => {
+        errorEl.style.display = 'none';
+      }, 4000);
     }
 
     // Allow login on Enter key
-    document.addEventListener('keypress', function(e) {
+    document.getElementById('password').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         login();
       }
@@ -210,8 +221,11 @@
       
       // If already logged in, redirect to chat
       if (localStorage.getItem('currentUser')) {
-        window.location.href = 'Chat';
+        window.location.href = 'chat.html';
       }
+      
+      // Debugging: Log stored users
+      console.log('Stored users:', JSON.parse(localStorage.getItem('users') || 'None'));
     });
   </script>
 </body>
