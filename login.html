@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
+  <title>Login - Cross-Device Access</title>
   <style>
     body {
       background-color: #121212;
@@ -12,8 +12,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
+      padding: 20px;
       transition: background-color 0.3s, color 0.3s;
     }
 
@@ -22,17 +23,18 @@
       color: black;
     }
 
-    .login-box {
+    .login-container {
+      width: 100%;
+      max-width: 400px;
       background-color: #1e1e1e;
-      padding: 40px;
+      padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-      width: 300px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     }
 
-    body.light-mode .login-box {
+    body.light-mode .login-container {
       background-color: #ffffff;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
@@ -41,37 +43,41 @@
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      font-weight: bold;
     }
 
     input {
       width: 100%;
       padding: 12px 16px;
-      border: none;
+      border: 1px solid #444;
       border-radius: 8px;
       background-color: #2a2a2a;
       color: white;
       box-sizing: border-box;
+      font-size: 16px;
     }
 
     body.light-mode input {
       background-color: #f0f0f0;
       color: black;
+      border-color: #ddd;
     }
 
     .login-button {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       background-color: #007BFF;
       border: none;
       border-radius: 8px;
       color: white;
       font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
       margin-top: 10px;
       transition: background-color 0.3s;
@@ -85,17 +91,21 @@
       display: block;
       margin-top: 20px;
       text-align: center;
-      color: white;
+      color: #007BFF;
       text-decoration: none;
+      font-weight: bold;
     }
 
     body.light-mode .back-link {
-      color: black;
+      color: #0056b3;
     }
 
     #error-message {
       color: #ff4d4f;
-      margin-top: 10px;
+      margin: 15px 0;
+      padding: 12px;
+      background-color: rgba(255, 77, 79, 0.1);
+      border-radius: 8px;
       text-align: center;
       display: none;
     }
@@ -104,53 +114,59 @@
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       border: none;
-      background-color: #333;
+      background-color: #007BFF;
       color: white;
       font-size: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background-color 0.3s;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s;
     }
 
     .toggle-btn:hover {
-      background-color: #555;
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 20px;
+      }
+      
+      input, .login-button {
+        padding: 12px;
+      }
     }
   </style>
 </head>
 <body class="dark-mode">
-  <div class="login-box">
-    <h2>Login</h2>
+  <div class="login-container">
+    <h2>Login Anywhere</h2>
+    <div id="error-message"></div>
+    
     <div class="form-group">
       <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Enter username" autocomplete="username"/>
+      <input type="text" id="username" placeholder="Enter your username" autocomplete="username" required>
     </div>
+    
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter password" autocomplete="current-password"/>
+      <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
     </div>
-    <div id="error-message"></div>
+    
     <button class="login-button" onclick="login()">Login</button>
-    <a href="Chat" class="back-link">← Back to Chat</a>
+    <a href="signup.html" class="back-link">Create new account</a>
   </div>
 
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
-    // Toggle between light and dark mode
-    function toggleMode() {
-      const body = document.body;
-      body.classList.toggle('dark-mode');
-      body.classList.toggle('light-mode');
-      localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-    }
-
-    // Initialize dark mode preference
+    // Initialize dark mode from localStorage
     function initDarkMode() {
       const darkMode = localStorage.getItem('darkMode');
       if (darkMode === 'false') {
@@ -159,22 +175,21 @@
       }
     }
 
-    // Login function - Fixed version
+    // Toggle dark/light mode
+    function toggleMode() {
+      document.body.classList.toggle('dark-mode');
+      document.body.classList.toggle('light-mode');
+      localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    }
+
+    // Login function with cross-device support
     function login() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
       const errorEl = document.getElementById('error-message');
 
-      // Get stored users
-      const storedUsers = localStorage.getItem('users');
-      
-      // Check if any users exist
-      if (!storedUsers) {
-        showError('No accounts exist. Please sign up first.');
-        return;
-      }
-
-      const users = JSON.parse(storedUsers);
+      // Clear previous errors
+      errorEl.style.display = 'none';
 
       // Validate inputs
       if (!username || !password) {
@@ -182,50 +197,66 @@
         return;
       }
 
-      if (!users[username]) {
+      // Check if user data exists in localStorage
+      const userData = localStorage.getItem('user_' + username);
+      
+      if (!userData) {
         showError('Username not found');
         return;
       }
 
-      if (users[username] !== password) {
-        showError('Incorrect password');
-        return;
-      }
+      try {
+        const user = JSON.parse(userData);
+        
+        // Verify password (in a real app, you'd use proper password hashing)
+        if (user.password !== password) {
+          showError('Incorrect password');
+          return;
+        }
 
-      // Successful login
-      localStorage.setItem('currentUser', username);
-      sessionStorage.setItem('justLoggedIn', 'true');
-      window.location.href = 'Chat'; // Explicit file reference
+        // Successful login - store session
+        localStorage.setItem('currentUser', username);
+        sessionStorage.setItem('justLoggedIn', 'true');
+        
+        // Redirect to chat page
+        window.location.href = 'chat.html';
+        
+      } catch (e) {
+        showError('Error accessing account data');
+        console.error('Login error:', e);
+      }
     }
 
     // Show error message
-    function showError(msg) {
+    function showError(message) {
       const errorEl = document.getElementById('error-message');
-      errorEl.textContent = msg;
+      errorEl.textContent = message;
       errorEl.style.display = 'block';
-      setTimeout(() => {
-        errorEl.style.display = 'none';
-      }, 4000);
     }
 
     // Allow login on Enter key
-    document.getElementById('password').addEventListener('keypress', function(e) {
+    document.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         login();
       }
     });
 
-    // Initialize page
+    // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       initDarkMode();
       
       // If already logged in, redirect to chat
       if (localStorage.getItem('currentUser')) {
-        window.location.href = 'Chat';
+        window.location.href = 'chat.html';
       }
       
-      // Debugging: Log stored users
-      console.log('Stored users:', JSON.parse(localStorage.getItem('users') || 'None'));
+      // Check for signup redirect with prefilled username
+      const urlParams = new URLSearchParams(window.location.search);
+      const newUser = urlParams.get('newUser');
+      if (newUser) {
+        document.getElementById('username').value = newUser;
+        document.getElementById('password').focus();
+      }
     });
   </script>
 </body>
