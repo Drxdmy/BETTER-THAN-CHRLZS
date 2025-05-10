@@ -145,13 +145,13 @@
       align-items: center;
       gap: 10px;
       z-index: 100;
+      cursor: pointer;
     }
 
     .profile-area {
       display: flex;
       align-items: center;
       gap: 8px;
-      cursor: pointer;
       padding: 5px 10px;
       border-radius: 20px;
       transition: background-color 0.2s;
@@ -190,14 +190,8 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       padding: 10px 0;
       min-width: 180px;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s;
-    }
-
-    .profile-wrapper:hover .dropdown-menu {
-      opacity: 1;
-      visibility: visible;
+      display: none;
+      z-index: 101;
     }
 
     .dropdown-menu button {
@@ -213,6 +207,19 @@
 
     .dropdown-menu button:hover {
       background-color: #007BFF;
+    }
+
+    body.light-mode .dropdown-menu {
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-mode .dropdown-menu button {
+      color: #333;
+    }
+
+    body.light-mode .dropdown-menu button:hover {
+      color: white;
     }
   </style>
 </head>
@@ -231,13 +238,13 @@
     </div>
   </div>
 
-  <!-- Profile section -->
-  <div class="profile-wrapper" id="profile-wrapper" style="display: none;">
-    <div class="profile-area" onclick="goToProfile()">
+  <!-- Profile section - always visible -->
+  <div class="profile-wrapper" id="profile-wrapper">
+    <div class="profile-area" onclick="handleProfileClick()">
       <div class="profile-icon"><i>👤</i></div>
       <span class="username" id="username-display"></span>
     </div>
-    <div class="dropdown-menu">
+    <div class="dropdown-menu" id="dropdown-menu">
       <button onclick="goToProfile()">Profile</button>
       <button onclick="signOut()">Sign Out</button>
     </div>
@@ -254,33 +261,80 @@
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
-    // Track if we should show error on page load
-    let showErrorOnLoad = localStorage.getItem('showErrorOnLoad') === 'true';
-    
-    // Detect if user is signed in
+    // Persistent login check
     function checkLoginStatus() {
       const currentUser = localStorage.getItem("currentUser");
+      const usernameDisplay = document.getElementById("username-display");
+      const authLinks = document.getElementById("auth-links");
+      const dropdownMenu = document.getElementById("dropdown-menu");
 
       if (currentUser) {
-        // Show profile section
-        document.getElementById("profile-wrapper").style.display = "flex";
-        document.getElementById("username-display").textContent = currentUser;
+        // User is logged in
+        usernameDisplay.textContent = currentUser;
+        authLinks.style.display = "none";
         
-        // Show "Sign in successful" message and hide auth links
-        document.getElementById("sign-in-success").style.display = "block";
-        document.getElementById("auth-links").style.display = "none";
-        
-        // Hide login/signup links
-        setTimeout(() => document.getElementById("sign-in-success").style.display = "none", 4000);
-      } else if (showErrorOnLoad) {
-        // Only show error if we've set the flag
-        document.getElementById("error").style.display = "block";
+        // Show success message if just logged in
+        if (sessionStorage.getItem("justLoggedIn")) {
+          document.getElementById("sign-in-success").style.display = "block";
+          setTimeout(() => {
+            document.getElementById("sign-in-success").style.display = "none";
+          }, 3000);
+          sessionStorage.removeItem("justLoggedIn");
+        }
+      } else {
+        // User is not logged in
+        usernameDisplay.textContent = "";
+        authLinks.style.display = "flex";
+      }
+    }
+
+    // Handle profile click
+    function handleProfileClick() {
+      const currentUser = localStorage.getItem("currentUser");
+      const dropdownMenu = document.getElementById("dropdown-menu");
+      
+      if (currentUser) {
+        // Toggle dropdown menu
+        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+      } else {
+        showError();
+      }
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      const dropdownMenu = document.getElementById("dropdown-menu");
+      const profileWrapper = document.getElementById("profile-wrapper");
+      
+      if (!profileWrapper.contains(event.target)) {
+        dropdownMenu.style.display = "none";
+      }
+    });
+
+    // Go to profile page
+    function goToProfile() {
+      if (localStorage.getItem("currentUser")) {
+        window.location.href = "profile.html";
+      }
+    }
+
+    // Sign out function
+    function signOut() {
+      localStorage.removeItem("currentUser");
+      window.location.reload();
+    }
+
+    // Show error message
+    function showError() {
+      if (!localStorage.getItem("currentUser")) {
+        const error = document.getElementById('error');
+        error.style.display = 'block';
+        error.classList.remove('fade-out');
+
         setTimeout(() => {
-          document.getElementById("error").classList.add("fade-out");
-          setTimeout(() => document.getElementById("error").style.display = "none", 1000);
-        }, 4000);
-        // Reset the flag
-        localStorage.setItem('showErrorOnLoad', 'false');
+          error.classList.add('fade-out');
+          setTimeout(() => error.style.display = 'none', 1000);
+        }, 3000);
       }
     }
 
@@ -289,35 +343,25 @@
       const body = document.body;
       body.classList.toggle('dark-mode');
       body.classList.toggle('light-mode');
-    }
-
-    // Sign out function
-    function signOut() {
-      localStorage.removeItem("currentUser");
-      sessionStorage.removeItem("justLoggedIn");
-      window.location.reload();
-    }
-
-    // Go to profile page
-    function goToProfile() {
-      window.location.href = "profile.html";
-    }
-
-    // Show error message
-    function showError() {
-      // Set flag so error will show if page is refreshed
-      localStorage.setItem('showErrorOnLoad', 'true');
       
-      const error = document.getElementById('error');
-      error.style.display = 'block';
-      error.classList.remove('fade-out');
-
-      setTimeout(() => error.classList.add('fade-out'), 4000);
-      setTimeout(() => error.style.display = 'none', 5000);
+      // Save preference to localStorage
+      localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
     }
 
-    // Call checkLoginStatus on page load
-    checkLoginStatus();
+    // Initialize dark mode preference
+    function initDarkMode() {
+      const darkMode = localStorage.getItem('darkMode');
+      if (darkMode === 'false') {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      initDarkMode();
+      checkLoginStatus();
+    });
   </script>
 </body>
 </html>
