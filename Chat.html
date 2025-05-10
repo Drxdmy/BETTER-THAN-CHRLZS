@@ -28,11 +28,21 @@
 
     .button-container {
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .button-row {
+      display: flex;
       gap: 15px;
       flex-wrap: wrap;
       justify-content: center;
-      align-items: center;
-      position: relative;
+      width: 100%;
     }
 
     .button {
@@ -46,6 +56,10 @@
       cursor: pointer;
       transition: background-color 0.3s, transform 0.2s;
       outline: none;
+      flex: 1;
+      min-width: 120px;
+      max-width: 200px;
+      text-align: center;
     }
 
     .button:hover {
@@ -54,25 +68,35 @@
     }
 
     .error-message {
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      margin-top: 10px;
-      padding: 8px 15px;
+      width: 100%;
+      padding: 12px 20px;
       background-color: #ff4d4f;
       color: white;
       border-radius: 6px;
       font-size: 0.9rem;
-      opacity: 1;
-      transition: opacity 1s ease-out;
-      white-space: nowrap;
-      max-width: 100%;
-      z-index: 1;
+      text-align: center;
+      box-sizing: border-box;
+      word-break: break-word;
+      margin-top: 10px;
+      display: none;
+    }
+
+    #sign-in-success {
+      width: 100%;
+      padding: 12px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      text-align: center;
+      box-sizing: border-box;
+      margin-top: 10px;
+      display: none;
     }
 
     .fade-out {
       opacity: 0;
+      transition: opacity 1s ease-out;
     }
 
     .toggle-btn {
@@ -136,7 +160,6 @@
       text-decoration: underline;
     }
 
-    /* Profile section styles */
     .profile-wrapper {
       position: fixed;
       top: 20px;
@@ -226,19 +249,20 @@
 <body class="dark-mode">
 
   <div class="button-container">
-    <button class="button" onclick="showError()">Find Friends</button>
-    <button class="button" onclick="showError()">Chats</button>
+    <div class="button-row">
+      <button class="button" onclick="showError()">Find Friends</button>
+      <button class="button" onclick="showError()">Chats</button>
+    </div>
 
-    <div id="error" class="error-message" style="display:none;">
+    <div id="error" class="error-message">
       ERROR: Please log in or sign up to continue
     </div>
 
-    <div id="sign-in-success" style="display:none; padding: 10px; background-color: green; color: white; border-radius: 6px;">
+    <div id="sign-in-success">
       Sign in successful!
     </div>
   </div>
 
-  <!-- Profile section - always visible -->
   <div class="profile-wrapper" id="profile-wrapper">
     <div class="profile-area" onclick="handleProfileClick()">
       <div class="profile-icon"><i>👤</i></div>
@@ -250,7 +274,6 @@
     </div>
   </div>
 
-  <!-- Auth Links - Login and Sign Up -->
   <div class="auth-links" id="auth-links">
     <a href="login.html">Login</a>
     <span>|</span>
@@ -261,7 +284,10 @@
   <button class="toggle-btn" onclick="toggleMode()">🌙</button>
 
   <script>
-    // Persistent login check
+    // Track if we should show error on page load
+    let showErrorOnLoad = localStorage.getItem('showErrorOnLoad') === 'true';
+    
+    // Detect if user is signed in
     function checkLoginStatus() {
       const currentUser = localStorage.getItem("currentUser");
       const usernameDisplay = document.getElementById("username-display");
@@ -285,6 +311,7 @@
         // User is not logged in
         usernameDisplay.textContent = "";
         authLinks.style.display = "flex";
+        dropdownMenu.style.display = "none";
       }
     }
 
@@ -335,6 +362,9 @@
           error.classList.add('fade-out');
           setTimeout(() => error.style.display = 'none', 1000);
         }, 3000);
+        
+        // Set flag so error will show if page is refreshed
+        localStorage.setItem('showErrorOnLoad', 'true');
       }
     }
 
