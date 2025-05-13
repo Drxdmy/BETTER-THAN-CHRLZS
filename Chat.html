@@ -3,176 +3,180 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chat</title>
+  <title>Chat Page</title>
   <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --input-bg: #1e1e1e;
+      --accent-color: #4caf50;
+    }
+
+    [data-theme='light'] {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --input-bg: #f0f0f0;
+      --accent-color: #1e90ff;
+    }
+
     * {
       box-sizing: border-box;
     }
 
     body {
-      background-color: #0f0f0f;
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      flex-direction: column;
     }
 
-    .chat-container {
-      background-color: #1c1c1e;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-      width: 100%;
-      max-width: 600px;
-      position: relative;
-    }
-
-    .chat-header {
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      padding: 20px 30px;
+      background-color: var(--input-bg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
-    .chat-header h2 {
-      margin: 0;
+    .logo {
       font-size: 24px;
+      font-weight: bold;
     }
 
-    .username {
-      font-size: 16px;
-      color: #bbb;
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .logout-button {
-      background-color: #e53e3e;
-      padding: 8px 16px;
-      border-radius: 10px;
-      border: none;
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background-color 0.2s ease;
-    }
-
-    .logout-button:hover {
-      background-color: #c53030;
-    }
-
-    .messages {
-      max-height: 300px;
-      overflow-y: scroll;
-      margin-bottom: 20px;
-      padding: 10px;
-      background-color: #2a2a2c;
-      border-radius: 8px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: 1px solid #333;
-      background-color: #2a2a2c;
-      color: white;
-      font-size: 14px;
-      transition: all 0.2s ease;
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: #4CAF50;
-      background-color: #303030;
-    }
-
-    .send-message-button {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      background-color: #007BFF;
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-
-    .send-message-button:hover {
-      background-color: #0056b3;
-    }
-
-    .back-to-chat-button {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background-color: #333;
-      padding: 8px 12px;
-      border-radius: 50%;
-      font-size: 16px;
-      cursor: pointer;
-      color: white;
-      border: none;
-    }
-
-    .back-to-chat-button:hover {
-      background-color: #444;
-    }
-
-    .theme-toggle {
-      position: absolute;
-      top: 20px;
-      right: 20px;
+    .toggle-button {
+      padding: 6px 12px;
       background-color: transparent;
-      border: none;
-      color: #fff;
-      font-size: 16px;
+      border: 1px solid var(--text-color);
+      border-radius: 4px;
+      color: var(--text-color);
       cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
+      font-size: 14px;
     }
 
-    #error-message {
-      color: #ff4d4f;
-      margin-top: 12px;
-      text-align: center;
-      display: none;
+    .sign-out-button {
+      padding: 6px 12px;
+      background-color: var(--accent-color);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
       font-size: 14px;
+    }
+
+    #status {
+      font-size: 14px;
+    }
+
+    main {
+      flex: 1;
+      padding: 30px;
+    }
+
+    footer {
+      background-color: var(--input-bg);
+      text-align: center;
+      padding: 10px;
+      font-size: 13px;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+    }
+
+    .chat-box {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: var(--input-bg);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+    }
+
+    .chat-box h2 {
+      margin-top: 0;
+    }
+
+    .message-area {
+      min-height: 300px;
+      border: 1px solid var(--text-color);
+      padding: 10px;
+      margin-bottom: 15px;
+      overflow-y: auto;
+      background-color: var(--bg-color);
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--text-color);
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .input-area button {
+      padding: 10px 16px;
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .input-area {
+        flex-direction: column;
+      }
+
+      .input-area input,
+      .input-area button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Night/Day Mode Toggle Button -->
-  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-
-  <!-- Back to Chat Button -->
-  <button class="back-to-chat-button" onclick="goBackToChat()">←</button>
-
-  <div class="chat-container">
-    <div class="chat-header">
-      <h2>Chat</h2>
-      <div class="username" id="username-display">Not logged in</div>
+  <header>
+    <div class="logo">Chat App</div>
+    <div class="toggle-container">
+      <button class="toggle-button" onclick="toggleTheme()">Toggle Theme</button>
+      <div id="status">Checking sign-in...</div>
+      <button class="sign-out-button" id="signOutBtn" style="display: none;" onclick="handleSignOut()">Sign Out</button>
     </div>
-    <div id="error-message"></div>
-    <div class="messages" id="messages-container">
-      <!-- Chat messages will go here -->
+  </header>
+
+  <main>
+    <div class="chat-box">
+      <h2>Welcome to the Chat Room</h2>
+      <div class="message-area" id="messages">
+        <p><em>Messages will appear here...</em></p>
+      </div>
+      <div class="input-area">
+        <input type="text" id="messageInput" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
     </div>
+  </main>
 
-    <div class="form-group">
-      <input type="text" id="message-input" placeholder="Type your message">
-    </div>
+  <footer>
+    &copy; 2025 BTCHIZL Chat App. All rights reserved.
+  </footer>
 
-    <button class="send-message-button" onclick="sendMessage()">Send Message</button>
-    <button class="logout-button" onclick="logOut()">Log Out</button>
-  </div>
-
+  <!-- Firebase SDK Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -181,7 +185,7 @@
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
       authDomain: "btchizl.firebaseapp.com",
       projectId: "btchizl",
-      storageBucket: "btchizl.appspot.com",
+      storageBucket: "btchizl.firebasestorage.app",
       messagingSenderId: "113542799682",
       appId: "1:113542799682:web:0b2df380ef6e172e5d68db",
       measurementId: "G-RCQHVSFFQS"
@@ -190,82 +194,52 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Listen for authentication state changes
+    const statusEl = document.getElementById("status");
+    const signOutBtn = document.getElementById("signOutBtn");
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const usernameDisplay = document.getElementById('username-display');
-        const messageInput = document.getElementById('message-input');
-        const logoutButton = document.querySelector('.logout-button');
-        
-        // Set the user's email (or username if available) to the display
-        usernameDisplay.textContent = user.displayName || user.email;
-        messageInput.disabled = false; // Enable message input
-        logoutButton.style.display = 'inline-block'; // Show log out button
+        const name = user.displayName || user.email || "User";
+        statusEl.textContent = `Signed in as ${name}`;
+        signOutBtn.style.display = "inline-block";
       } else {
-        // If not logged in
-        const usernameDisplay = document.getElementById('username-display');
-        usernameDisplay.textContent = 'Not logged in';
-        document.getElementById('message-input').disabled = true; // Disable message input
-        document.querySelector('.logout-button').style.display = 'none'; // Hide log out button
+        statusEl.textContent = "You are not signed in.";
+        signOutBtn.style.display = "none";
+        // Optional: Redirect to login page if not signed in
+        // window.location.href = "login.html";
       }
     });
 
-    // Log out function
-    function logOut() {
+    window.handleSignOut = () => {
       signOut(auth).then(() => {
-        window.location.href = 'index.html'; // Redirect to sign-in page
-      }).catch((error) => {
-        console.error(error);
-        showError('An error occurred while logging out.');
+        location.reload();
       });
-    }
+    };
+  </script>
 
-    // Function to send a message (can be expanded with Firebase database integration)
-    function sendMessage() {
-      const message = document.getElementById('message-input').value;
-      if (!message) {
-        showError('Please enter a message.');
-        return;
-      }
-
-      // Add message to the UI (this can be extended with Firebase to store messages)
-      const messagesContainer = document.getElementById('messages-container');
-      const newMessage = document.createElement('div');
-      newMessage.textContent = message;
-      messagesContainer.appendChild(newMessage);
-
-      // Clear input
-      document.getElementById('message-input').value = '';
-    }
-
-    function showError(msg) {
-      const errorEl = document.getElementById('error-message');
-      errorEl.textContent = msg;
-      errorEl.style.display = 'block';
-      setTimeout(() => errorEl.style.display = 'none', 4000);
-    }
-
-    // Back to Chat Button Functionality
-    function goBackToChat() {
-      window.location.href = 'Chat'; // Redirect to Chat page
-    }
-
-    // Toggle Theme Functionality
+  <!-- Theme Toggle Script -->
+  <script>
     function toggleTheme() {
-      const body = document.body;
-      const themeToggleButton = document.querySelector('.theme-toggle');
-      const currentTheme = body.style.backgroundColor;
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "light" ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", next);
+    }
 
-      if (currentTheme === "rgb(15, 15, 15)") { // Dark Mode
-        body.style.backgroundColor = "#f4f4f9"; // Light Mode
-        document.querySelector('.chat-container').style.backgroundColor = "#ffffff";
-        themeToggleButton.textContent = "🌙";
-        document.body.style.color = "#333";
-      } else {
-        body.style.backgroundColor = "#0f0f0f"; // Dark Mode
-        document.querySelector('.chat-container').style.backgroundColor = "#1c1c1e";
-        themeToggleButton.textContent = "🌞";
-        document.body.style.color = "#fff";
+    // Default to dark theme
+    document.documentElement.setAttribute("data-theme", "dark");
+  </script>
+
+  <!-- Placeholder Chat Functionality -->
+  <script>
+    function sendMessage() {
+      const input = document.getElementById("messageInput");
+      const messages = document.getElementById("messages");
+      if (input.value.trim() !== "") {
+        const msg = document.createElement("p");
+        msg.textContent = input.value;
+        messages.appendChild(msg);
+        input.value = "";
+        messages.scrollTop = messages.scrollHeight;
       }
     }
   </script>
