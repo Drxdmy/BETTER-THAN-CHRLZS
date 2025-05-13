@@ -2,148 +2,144 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
-    :root {
-      --bg: #121212;
-      --fg: white;
-      --input-bg: #1e1e1e;
-      --accent: #4CAF50;
+    * {
+      box-sizing: border-box;
     }
-    body.light {
-      --bg: #f0f0f0;
-      --fg: black;
-      --input-bg: #fff;
-      --accent: #4CAF50;
-    }
+
     body {
-      background-color: var(--bg);
-      color: var(--fg);
-      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
-      transition: background-color 0.3s, color 0.3s;
     }
-    .signup-box {
-      background-color: var(--input-bg);
+
+    .signup-container {
+      background-color: #1c1c1e;
       padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-      width: 350px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      max-width: 400px;
     }
-    h2 {
+
+    .signup-container h2 {
+      margin-bottom: 10px;
+      font-size: 28px;
       text-align: center;
-      margin-bottom: 24px;
     }
+
+    .signup-container p {
+      text-align: center;
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 30px;
+    }
+
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
-    label {
+
+    .form-group label {
       display: block;
       margin-bottom: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #ddd;
     }
-    input[type="text"],
-    input[type="password"],
-    input[type="email"],
-    select {
+
+    .form-group input {
       width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background-color: #2a2a2a;
-      color: var(--fg);
-    }
-    .signup-button,
-    .google-button {
-      width: 100%;
-      padding: 12px;
-      background-color: var(--accent);
-      border: none;
-      border-radius: 8px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background-color: #2a2a2c;
       color: white;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
+      font-size: 14px;
+      transition: all 0.2s ease;
     }
-    .signup-button:hover,
-    .google-button:hover {
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #4CAF50;
+      background-color: #303030;
+    }
+
+    .signup-button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .signup-button:hover {
       background-color: #45a049;
     }
-    .back-link,
-    .forgot-link {
-      display: block;
-      margin-top: 10px;
+
+    .back-link {
+      margin-top: 20px;
       text-align: center;
-      color: var(--fg);
+      display: block;
+      color: #bbb;
       text-decoration: none;
+      font-size: 14px;
     }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
     #error-message {
       color: #ff4d4f;
-      margin-top: 10px;
+      margin-top: 12px;
       text-align: center;
       display: none;
+      font-size: 14px;
     }
-    .toggle-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
+
+    @media (max-width: 480px) {
+      .signup-container {
+        padding: 30px 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="signup-box">
-    <h2>Create an Account</h2>
+  <div class="signup-container">
+    <h2>Create Account</h2>
+    <p>Join us and start your journey!</p>
     <div class="form-group">
       <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Enter username" />
-    </div>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" placeholder="Enter email" />
+      <input type="text" id="username" placeholder="Enter a username">
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter password" />
+      <input type="password" id="password" placeholder="Enter password">
     </div>
     <div class="form-group">
       <label for="confirm-password">Confirm Password</label>
-      <input type="password" id="confirm-password" placeholder="Re-enter password" />
-    </div>
-    <div class="form-group">
-      <label for="security">Security Question (optional)</label>
-      <select id="security">
-        <option value="">Select a question</option>
-        <option value="pet">What is your first pet's name?</option>
-        <option value="school">What was your primary school?</option>
-        <option value="movie">What is your favorite movie?</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <input type="checkbox" id="remember-me" /> <label for="remember-me">Remember me</label>
-    </div>
-    <div class="form-group">
-      <input type="checkbox" id="not-robot" /> <label for="not-robot">I'm not a robot</label>
+      <input type="password" id="confirm-password" placeholder="Re-enter password">
     </div>
     <div id="error-message"></div>
     <button class="signup-button" onclick="signUp()">Sign Up</button>
-    <button class="google-button" onclick="signUpWithGoogle()"><i class="fab fa-google"></i> Sign Up with Google</button>
     <a href="Chat" class="back-link">← Back to Chat</a>
-    <a href="#" class="forgot-link">Forgot password?</a>
-    <div class="toggle-container">
-      <label for="theme-toggle">Dark Mode</label>
-      <input type="checkbox" id="theme-toggle" checked />
-    </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
@@ -157,40 +153,29 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
 
     window.signUp = function () {
       const username = document.getElementById('username').value.trim();
-      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
-      const robotChecked = document.getElementById('not-robot').checked;
 
-      if (!username || !email || !password || !confirmPassword) {
+      if (!username || !password || !confirmPassword) {
         return showError('All fields are required.');
       }
+
       if (password !== confirmPassword) {
         return showError('Passwords do not match.');
       }
-      if (!robotChecked) {
-        return showError('Please confirm you are not a robot.');
-      }
+
+      const email = `${username}@btchizl.com`; // Convert username to dummy email format
 
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-          alert("Successfully signed up!");
-          window.location.href = "Chat";
+          window.location.href = 'Chat';
         })
-        .catch((error) => showError(error.message));
-    }
-
-    window.signUpWithGoogle = function () {
-      signInWithPopup(auth, provider)
-        .then(() => {
-          alert("Signed in with Google!");
-          window.location.href = "Chat";
-        })
-        .catch(error => showError(error.message));
+        .catch((error) => {
+          showError(error.message);
+        });
     }
 
     function showError(msg) {
@@ -199,11 +184,6 @@
       errorEl.style.display = 'block';
       setTimeout(() => errorEl.style.display = 'none', 4000);
     }
-
-    const themeToggle = document.getElementById("theme-toggle");
-    themeToggle.addEventListener("change", () => {
-      document.body.classList.toggle("light");
-    });
   </script>
 </body>
 </html>
