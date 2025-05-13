@@ -131,6 +131,34 @@
     .back-button:hover {
       background-color: #45a049;
     }
+
+    /* Log In | Sign Up Buttons */
+    .auth-buttons {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .auth-buttons button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 25px;
+      font-size: 18px;
+      width: 120px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .auth-buttons button:hover {
+      background-color: #45a049;
+    }
+
+    .auth-buttons button:focus {
+      outline: none;
+    }
   </style>
 </head>
 <body>
@@ -157,6 +185,12 @@
 
   <!-- Light/Dark Mode Toggle -->
   <button class="toggle" onclick="toggleDarkMode()">🌙</button>
+
+  <!-- Log In | Sign Up Buttons -->
+  <div class="auth-buttons">
+    <button onclick="window.location.href='login.html'">Log In</button>
+    <button onclick="window.location.href='signup.html'">Sign Up</button>
+  </div>
 
   <!-- Firebase SDK Integration -->
   <script type="module">
