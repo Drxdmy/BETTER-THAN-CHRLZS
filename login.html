@@ -198,7 +198,7 @@
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Successfully logged in
-          window.location.href = 'Chat';  // Redirect to Chat page after login
+          window.location.href = 'mwnu';  // Redirect to Chat page after login
         })
         .catch((error) => {
           showError(error.message);
@@ -214,7 +214,7 @@
 
     // Back to Chat Button Functionality
     function goBackToChat() {
-      window.location.href = 'Chat'; // Redirect to Chat page
+      window.location.href = 'menu'; // Redirect to Chat page
     }
 
     // Toggle Theme Functionality
