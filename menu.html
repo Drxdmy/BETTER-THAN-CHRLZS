@@ -15,7 +15,7 @@
       flex-direction: column;
       height: 100vh;
     }
-    
+
     /* Header styles */
     .header {
       display: flex;
@@ -35,7 +35,12 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
+      margin-left: 10px;
+    }
+
+    .header .profile span {
       margin-right: 10px;
+      font-size: 18px;
     }
 
     /* Menu buttons */
@@ -135,8 +140,8 @@
   <div class="header">
     <!-- Profile and Dropdown Menu -->
     <div class="profile" onclick="toggleDropdown()">
-      <img src="profile_icon.png" alt="Profile Icon" id="profileIcon">
       <span id="usernameDisplay">Guest</span>
+      <img src="profile_icon.png" alt="Profile Icon" id="profileIcon">
     </div>
     <div class="dropdown" id="dropdownMenu">
       <a href="#" onclick="signOut()">Sign Out</a>
@@ -197,9 +202,19 @@
     // Toggle dark/light mode
     function toggleDarkMode() {
       const body = document.body;
-      body.style.backgroundColor = body.style.backgroundColor === 'rgb(18, 18, 18)' ? '#ffffff' : '#121212';
-      body.style.color = body.style.color === 'rgb(255, 255, 255)' ? '#121212' : 'white';
-      document.querySelector('.toggle').textContent = body.style.backgroundColor === 'rgb(18, 18, 18)' ? '🌙' : '🌞';
+      const isDark = body.style.backgroundColor === 'rgb(18, 18, 18)'; // check if currently in dark mode
+
+      if (isDark) {
+        // Switch to light mode
+        body.style.backgroundColor = '#ffffff';
+        body.style.color = '#121212';
+        document.querySelector('.toggle').textContent = '🌙'; // Change to dark mode icon
+      } else {
+        // Switch to dark mode
+        body.style.backgroundColor = '#121212';
+        body.style.color = 'white';
+        document.querySelector('.toggle').textContent = '🌞'; // Change to light mode icon
+      }
     }
   </script>
 </body>
