@@ -1,103 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menu</title>
   <style>
-    :root {
-      --bg-color: #121212;
-      --text-color: #ffffff;
-      --card-color: #1e1e1e;
-      --button-bg: #007bff;
-      --button-text: #fff;
-    }
-
-    [data-theme="light"] {
-      --bg-color: #f5f5f5;
-      --text-color: #121212;
-      --card-color: #ffffff;
-      --button-bg: #007bff;
-      --button-text: #fff;
-    }
-
+    /* Basic styles */
     body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
       display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    
+    /* Header styles */
+    .header {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 20px;
+      align-items: center;
+      position: relative;
+    }
+
+    .header .profile {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .header .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    /* Menu buttons */
+    .menu {
+      display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      flex-direction: column;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      flex-grow: 1;
     }
 
-    .container {
-      text-align: center;
-      background-color: var(--card-color);
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      width: 90%;
-      max-width: 500px;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    .user-info {
-      margin: 20px 0;
+    .menu button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 15px 30px;
       font-size: 18px;
+      width: 200px;
+      border-radius: 8px;
+      margin: 10px;
+      cursor: pointer;
+      transition: 0.3s;
     }
 
-    .btn {
-      padding: 12px 24px;
-      background-color: var(--button-bg);
-      color: var(--button-text);
+    .menu button:hover {
+      background-color: #45a049;
+    }
+
+    /* Dark/Light Mode Toggle */
+    .toggle {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .toggle:focus {
+      outline: none;
+    }
+
+    /* Profile Dropdown */
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      width: 180px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .dropdown a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 0;
+      display: block;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .dropdown a:hover {
+      background-color: #444;
+    }
+
+    /* Back Button */
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #4CAF50;
+      padding: 10px 15px;
+      color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-size: 16px;
-      margin: 8px;
-      transition: background-color 0.2s ease;
     }
 
-    .btn:hover {
-      background-color: #0056b3;
-    }
-
-    .toggle-theme {
-      margin-top: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      text-decoration: underline;
-      color: var(--button-text);
-    }
-
-    #status-message {
-      margin-top: 10px;
-      font-size: 16px;
-      color: limegreen;
+    .back-button:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to the Menu</h1>
-    <div class="user-info" id="user-info">Checking sign-in status...</div>
-    <button class="btn" id="sign-out-btn" style="display:none;">Sign Out</button>
-    <div id="status-message"></div>
-    <div class="toggle-theme" onclick="toggleTheme()">Toggle Theme</div>
+  <!-- Back Button -->
+  <button class="back-button" onclick="window.location.href='index.html'">Back</button>
+
+  <!-- Header Section -->
+  <div class="header">
+    <!-- Profile and Dropdown Menu -->
+    <div class="profile" onclick="toggleDropdown()">
+      <img src="profile_icon.png" alt="Profile Icon" id="profileIcon">
+      <span id="usernameDisplay">Guest</span>
+    </div>
+    <div class="dropdown" id="dropdownMenu">
+      <a href="#" onclick="signOut()">Sign Out</a>
+    </div>
   </div>
 
+  <!-- Menu Section -->
+  <div class="menu">
+    <button onclick="window.location.href='findFriend.html'">Find Friend</button>
+    <button onclick="window.location.href='chat.html'">Chat</button>
+  </div>
+
+  <!-- Light/Dark Mode Toggle -->
+  <div class="toggle" onclick="toggleDarkMode()">🌙</div>
+
+  <!-- Firebase SDK Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+    
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
       authDomain: "btchizl.firebaseapp.com",
@@ -111,45 +170,37 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    const userInfo = document.getElementById('user-info');
-    const signOutBtn = document.getElementById('sign-out-btn');
-    const statusMessage = document.getElementById('status-message');
-
-    onAuthStateChanged(auth, user => {
+    // Check user sign-in state
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        const username = user.email.split('@')[0];
-        userInfo.textContent = `Signed in as: ${username}`;
-        signOutBtn.style.display = 'inline-block';
-      } else {
-        userInfo.textContent = "You are not signed in.";
-        signOutBtn.style.display = 'none';
+        // Show username and update profile icon
+        document.getElementById('usernameDisplay').textContent = user.displayName || 'Username';
+        document.getElementById('profileIcon').src = 'profile_icon.png'; // Replace with actual profile image
       }
     });
 
-    signOutBtn.addEventListener('click', () => {
-      signOut(auth)
-        .then(() => {
-          statusMessage.textContent = "Signed out successfully.";
-          setTimeout(() => location.reload(), 1500);
-        })
-        .catch((error) => {
-          statusMessage.textContent = `Error: ${error.message}`;
-          statusMessage.style.color = 'red';
-        });
-    });
-
-    function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute("data-theme");
-      document.documentElement.setAttribute(
-        "data-theme",
-        currentTheme === "light" ? "dark" : "light"
-      );
-      localStorage.setItem("theme", document.documentElement.getAttribute("data-theme"));
+    // Sign out user
+    function signOut() {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html'; // Redirect to index after sign-out
+      }).catch((error) => {
+        console.error('Sign out error:', error);
+      });
     }
 
-    // Load saved theme
-    const savedTheme = localStorage.getItem("theme") || "dark";
-    document.documentElement.setAttribute("data-theme", savedTheme);
+    // Toggle dropdown menu
+    function toggleDropdown() {
+      const dropdown = document.getElementById('dropdownMenu');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Toggle dark/light mode
+    function toggleDarkMode() {
+      const body = document.body;
+      body.style.backgroundColor = body.style.backgroundColor === 'rgb(18, 18, 18)' ? '#ffffff' : '#121212';
+      body.style.color = body.style.color === 'rgb(255, 255, 255)' ? '#121212' : 'white';
+      document.querySelector('.toggle').textContent = body.style.backgroundColor === 'rgb(18, 18, 18)' ? '🌙' : '🌞';
+    }
   </script>
 </body>
 </html>
