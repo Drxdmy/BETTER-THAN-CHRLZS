@@ -56,9 +56,10 @@
     .header .profile span {
       margin-right: 10px;
       font-size: 18px;
+      font-weight: 500;
     }
 
-    /* Menu Buttons - Horizontal Layout */
+    /* Menu Buttons */
     .menu {
       display: flex;
       flex-direction: row;
@@ -254,8 +255,8 @@
   <div class="header">
     <!-- Profile and Dropdown Menu -->
     <div class="profile" id="profileSection" style="display: none;">
-      <span id="usernameDisplay">Guest</span>
-      <img src="default_profile.png" alt="Profile Icon" id="profileIcon">
+      <span id="usernameDisplay">User</span>
+      <img src="default_profile.png" alt="Profile" id="profileIcon">
     </div>
     <div class="dropdown" id="dropdownMenu">
       <a href="profile.html">My Profile</a>
@@ -272,7 +273,7 @@
   <!-- Light/Dark Mode Toggle -->
   <button class="toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
 
-  <!-- Auth Buttons (shown when not logged in) -->
+  <!-- Auth Buttons -->
   <div class="auth-buttons" id="authButtons">
     <a href="login.html">Log in</a>
     <span class="divider">|</span>
@@ -312,37 +313,35 @@
     const statusMessage = document.getElementById('statusMessage');
     const themeToggle = document.getElementById('themeToggle');
 
-    // Check authentication state
+    // Check authentication state - UPDATED TO ONLY SHOW USERNAME
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        // User is signed in
         profileSection.style.display = 'flex';
         authButtons.style.display = 'none';
         
         try {
-          // Get user document from Firestore
+          // 1. Get username from Firestore
           const userDoc = await db.collection('users').doc(user.uid).get();
+          let username = 'User';
           
           if (userDoc.exists) {
-            // Use the username from Firestore
-            const username = userDoc.data().username;
-            usernameDisplay.textContent = username;
-            
-            // Show welcome message if just logged in
-            if (sessionStorage.getItem('justLoggedIn')) {
-              showStatusMessage(`Welcome back, ${username}!`);
-              sessionStorage.removeItem('justLoggedIn');
-            }
-          } else {
-            // Fallback to displayName or email
-            usernameDisplay.textContent = user.displayName || user.email || 'User';
+            username = userDoc.data().username || 'User';
           }
           
-          // Set profile picture
+          // 2. Set username display (never shows email)
+          usernameDisplay.textContent = username;
+
+          // 3. Welcome message
+          if (sessionStorage.getItem('justLoggedIn')) {
+            showStatusMessage(`Welcome, ${username}!`);
+            sessionStorage.removeItem('justLoggedIn');
+          }
+
+          // 4. Profile picture
           if (user.photoURL) {
             profileIcon.src = user.photoURL;
           } else {
-            // Generate default avatar with first letter of username
+            // Create avatar with username's first letter
             const canvas = document.createElement('canvas');
             canvas.width = 40;
             canvas.height = 40;
@@ -353,16 +352,15 @@
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            const firstLetter = usernameDisplay.textContent.charAt(0).toUpperCase();
-            ctx.fillText(firstLetter, 20, 20);
+            ctx.fillText(username.charAt(0).toUpperCase(), 20, 20);
             profileIcon.src = canvas.toDataURL();
           }
+          
         } catch (error) {
-          console.error("Error fetching user data:", error);
-          usernameDisplay.textContent = user.displayName || user.email || 'User';
+          console.error("Error loading user data:", error);
+          usernameDisplay.textContent = 'User';
         }
       } else {
-        // User is signed out
         profileSection.style.display = 'none';
         authButtons.style.display = 'flex';
       }
@@ -383,11 +381,11 @@
     function signOut() {
       auth.signOut()
         .then(() => {
-          showStatusMessage('Successfully signed out');
+          showStatusMessage('Signed out successfully');
           setTimeout(() => window.location.href = 'index.html', 1000);
         })
         .catch((error) => {
-          showStatusMessage('Error signing out: ' + error.message, true);
+          showStatusMessage('Sign out error: ' + error.message, true);
         });
     }
 
@@ -397,7 +395,7 @@
         if (user) {
           window.location.href = page;
         } else {
-          showStatusMessage('Please log in to access this feature', true);
+          showStatusMessage('Please log in first', true);
           setTimeout(() => window.location.href = 'login.html', 1500);
         }
       });
@@ -437,7 +435,6 @@
       const darkModeSetting = localStorage.getItem('darkMode');
       
       let darkMode = true;
-      
       if (darkModeSetting !== null) {
         darkMode = darkModeSetting === 'true';
       } else {
@@ -445,7 +442,6 @@
       }
       
       const body = document.body;
-      
       if (darkMode) {
         body.classList.add('dark-mode');
         body.classList.remove('light-mode');
