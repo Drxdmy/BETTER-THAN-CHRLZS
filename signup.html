@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up</title>
+  <title>Advanced Sign Up</title>
   <style>
     body {
       background-color: #121212;
       color: white;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -16,26 +16,27 @@
       margin: 0;
     }
     .signup-box {
-      background-color: #1e1e1e;
+      background-color: #1f1f1f;
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-      width: 300px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      width: 360px;
     }
     h2 {
       text-align: center;
       margin-bottom: 24px;
     }
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     label {
       display: block;
       margin-bottom: 6px;
+      font-weight: bold;
     }
     input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border: none;
       border-radius: 8px;
       background-color: #2a2a2a;
@@ -45,7 +46,7 @@
     .signup-button {
       width: 100%;
       padding: 12px;
-      background-color: #2196F3;
+      background-color: #3a86ff;
       border: none;
       border-radius: 8px;
       color: white;
@@ -53,43 +54,51 @@
       cursor: pointer;
       margin-top: 10px;
     }
-    .signup-button:hover {
-      background-color: #1e87dc;
+    .signup-button:disabled {
+      background-color: #666;
+      cursor: not-allowed;
     }
-    .back-link {
-      display: block;
-      margin-top: 20px;
+    .message {
       text-align: center;
-      color: white;
-      text-decoration: none;
-    }
-    #error-message {
-      color: #ff4d4f;
       margin-top: 10px;
-      text-align: center;
-      display: none;
+      padding: 8px;
+      border-radius: 8px;
+    }
+    .error {
+      background-color: #ff4d4f;
+    }
+    .success {
+      background-color: #4CAF50;
     }
   </style>
 </head>
 <body>
   <div class="signup-box">
-    <h2>Sign Up</h2>
+    <h2>Advanced Sign Up</h2>
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="Enter your email">
+    </div>
     <div class="form-group">
       <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Enter username"/>
+      <input type="text" id="username" placeholder="Choose a username">
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter password"/>
+      <input type="password" id="password" placeholder="Create password">
     </div>
-    <div id="error-message"></div>
-    <button class="signup-button" onclick="signUp()">Sign Up</button>
-    <a href="index.html" class="back-link">← Back</a>
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" placeholder="Repeat password">
+    </div>
+    <button class="signup-button" id="signupBtn" onclick="signUp()">Sign Up</button>
+    <div id="message" class="message" style="display: none;"></div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
@@ -97,39 +106,77 @@
       projectId: "btchizl",
       storageBucket: "btchizl.appspot.com",
       messagingSenderId: "113542799682",
-      appId: "1:113542799682:web:0b2df380ef6e172e5d68db",
-      measurementId: "G-RCQHVSFFQS"
+      appId: "1:113542799682:web:0b2df380ef6e172e5d68db"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    window.signUp = function () {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
+    async function signUp() {
+      const email = document.getElementById("email").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const msgBox = document.getElementById("message");
+      const signUpBtn = document.getElementById("signupBtn");
 
-      if (!username || !password) {
-        return showError("Both fields are required.");
+      msgBox.style.display = "none";
+      msgBox.className = "message";
+      signUpBtn.disabled = true;
+
+      // Basic validations
+      if (!email || !username || !password || !confirmPassword) {
+        return showMessage("All fields are required.", "error");
+      }
+      if (!validateEmail(email)) {
+        return showMessage("Invalid email format.", "error");
+      }
+      if (password.length < 6) {
+        return showMessage("Password must be at least 6 characters.", "error");
+      }
+      if (password !== confirmPassword) {
+        return showMessage("Passwords do not match.", "error");
       }
 
-      // Create a fake email for login based on username
-      const email = `${username}@btchizl.com`;
+      // Check if username already exists
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("username", "==", username));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        return showMessage("Username already taken.", "error");
+      }
 
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // User created successfully
-          window.location.href = "Chat";
-        })
-        .catch((error) => {
-          showError(error.message);
+      // Create user
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCredential.user.uid;
+
+        await setDoc(doc(db, "users", uid), {
+          username: username,
+          email: email,
+          createdAt: new Date()
         });
+
+        showMessage("Account created! Redirecting...", "success");
+        setTimeout(() => window.location.href = "Chat", 1500);
+      } catch (error) {
+        showMessage(error.message, "error");
+      } finally {
+        signUpBtn.disabled = false;
+      }
     }
 
-    function showError(message) {
-      const errorDiv = document.getElementById('error-message');
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
-      setTimeout(() => errorDiv.style.display = 'none', 4000);
+    function showMessage(text, type) {
+      const msgBox = document.getElementById("message");
+      msgBox.textContent = text;
+      msgBox.classList.add(type);
+      msgBox.style.display = "block";
+      document.getElementById("signupBtn").disabled = false;
+    }
+
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
   </script>
 </body>
