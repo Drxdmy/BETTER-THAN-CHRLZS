@@ -3,152 +3,159 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
+  <title>Log In</title>
   <style>
-    :root {
-      --bg: #121212;
-      --text: #ffffff;
-      --card: #1e1e1e;
-      --input: #2a2a2a;
-      --accent: #4CAF50;
-      --accent-hover: #45a049;
-    }
-
-    [data-theme="light"] {
-      --bg: #ffffff;
-      --text: #000000;
-      --card: #f0f0f0;
-      --input: #e0e0e0;
-      --accent: #4CAF50;
-      --accent-hover: #388e3c;
+    * {
+      box-sizing: border-box;
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      transition: background 0.3s, color 0.3s;
     }
 
-    .login-box {
-      background-color: var(--card);
+    .login-container {
+      background-color: #1c1c1e;
       padding: 40px;
-      border-radius: 12px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
       width: 100%;
       max-width: 400px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
 
-    h2 {
+    .login-container h2 {
+      margin-bottom: 10px;
+      font-size: 28px;
       text-align: center;
-      margin-bottom: 24px;
+    }
+
+    .login-container p {
+      text-align: center;
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 30px;
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
-    label {
+    .form-group label {
       display: block;
       margin-bottom: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #ddd;
     }
 
-    input[type="email"],
-    input[type="password"] {
+    .form-group input {
       width: 100%;
       padding: 12px 16px;
-      border: none;
-      border-radius: 8px;
-      background-color: var(--input);
-      color: var(--text);
-    }
-
-    .btn {
-      width: 100%;
-      padding: 12px;
-      background-color: var(--accent);
-      border: none;
-      border-radius: 8px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background-color: #2a2a2c;
       color: white;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #4CAF50;
+      background-color: #303030;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 14px;
       font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .btn:hover {
-      background-color: var(--accent-hover);
-    }
-
-    .google-btn {
-      background-color: #db4437;
-    }
-
-    .toggle-theme {
-      background: none;
+      background-color: #4CAF50;
       border: none;
-      color: var(--text);
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
       cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .login-button:hover {
+      background-color: #45a049;
+    }
+
+    .forgot-password {
+      display: block;
       margin-top: 10px;
-      float: right;
+      text-align: center;
+      color: #bbb;
+      text-decoration: none;
+      font-size: 14px;
     }
 
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .forgot-password:hover {
+      text-decoration: underline;
     }
 
-    .checkbox-row input {
-      margin-right: 6px;
+    .back-link {
+      margin-top: 20px;
+      text-align: center;
+      display: block;
+      color: #bbb;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
     }
 
     #error-message {
       color: #ff4d4f;
+      margin-top: 12px;
       text-align: center;
-      margin-top: 10px;
       display: none;
+      font-size: 14px;
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 30px 20px;
+      }
     }
   </style>
 </head>
-<body data-theme="dark">
-  <div class="login-box">
+<body>
+  <div class="login-container">
     <h2>Log In</h2>
+    <p>Welcome back! Please log in to continue.</p>
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" id="email" placeholder="Enter email" />
+      <input type="email" id="email" placeholder="Enter your email">
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter password" />
-    </div>
-    <div class="checkbox-row">
-      <label><input type="checkbox" id="rememberMe" /> Remember me</label>
-      <a href="#" onclick="resetPassword()">Forgot password?</a>
-    </div>
-    <div class="checkbox-row">
-      <label><input type="checkbox" id="captchaCheck" /> I'm not a robot</label>
+      <input type="password" id="password" placeholder="Enter your password">
     </div>
     <div id="error-message"></div>
-    <button class="btn" onclick="logIn()">Log In</button>
-    <button class="btn google-btn" onclick="logInWithGoogle()">Log in with Google</button>
-    <button class="toggle-theme" onclick="toggleTheme()">🌙 Toggle Theme</button>
+    <button class="login-button" onclick="logIn()">Log In</button>
+    <a href="signup.html" class="back-link">Don't have an account? Sign up here</a>
+    <a href="#" class="forgot-password">Forgot Password?</a>
   </div>
 
-  <!-- Firebase SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
       authDomain: "btchizl.firebaseapp.com",
       projectId: "btchizl",
-      storageBucket: "btchizl.firebasestorage.app",
+      storageBucket: "btchizl.appspot.com",
       messagingSenderId: "113542799682",
       appId: "1:113542799682:web:0b2df380ef6e172e5d68db",
       measurementId: "G-RCQHVSFFQS"
@@ -156,70 +163,31 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
 
     window.logIn = function () {
-      const email = document.getElementById('email').value.trim();
+      const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const remember = document.getElementById('rememberMe').checked;
-      const captcha = document.getElementById('captchaCheck').checked;
 
-      if (!email || !password) return showError("All fields are required.");
-      if (!captcha) return showError("Please verify you're not a robot.");
+      if (!email || !password) {
+        return showError('Please fill out both fields.');
+      }
 
-      const persistence = remember
-        ? import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js").then(({ browserLocalPersistence, setPersistence }) => {
-            return setPersistence(auth, browserLocalPersistence);
-          })
-        : Promise.resolve();
-
-      persistence.then(() => {
-        signInWithEmailAndPassword(auth, email, password)
-          .then(() => {
-            window.location.href = "Chat";
-          })
-          .catch((error) => {
-            showError("Login failed: " + error.message);
-          });
-      });
-    };
-
-    window.logInWithGoogle = function () {
-      signInWithPopup(auth, provider)
-        .then(() => {
-          window.location.href = "Chat";
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Successfully signed in
+          window.location.href = 'Chat';  // Redirect to Chat page after login
         })
         .catch((error) => {
-          showError("Google sign-in error: " + error.message);
+          showError(error.message);
         });
-    };
-
-    window.resetPassword = function () {
-      const email = prompt("Enter your email for password reset:");
-      if (email) {
-        sendPasswordResetEmail(auth, email)
-          .then(() => alert("Password reset email sent."))
-          .catch((err) => showError(err.message));
-      }
-    };
-
-    function showError(msg) {
-      const el = document.getElementById('error-message');
-      el.textContent = msg;
-      el.style.display = 'block';
-      setTimeout(() => el.style.display = 'none', 4000);
     }
 
-    window.toggleTheme = function () {
-      const current = document.body.getAttribute('data-theme');
-      document.body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-    };
-
-    // Autofill email from localStorage if remembered
-    window.onload = () => {
-      const remembered = localStorage.getItem("rememberedEmail");
-      if (remembered) document.getElementById("email").value = remembered;
-    };
+    function showError(msg) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+      setTimeout(() => errorEl.style.display = 'none', 4000);
+    }
   </script>
 </body>
 </html>
