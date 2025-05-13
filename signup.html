@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login</title>
+  <title>Sign Up</title>
   <style>
     body {
       background-color: #121212;
@@ -15,7 +15,7 @@
       height: 100vh;
       margin: 0;
     }
-    .login-box {
+    .signup-box {
       background-color: #1e1e1e;
       padding: 40px;
       border-radius: 12px;
@@ -42,10 +42,10 @@
       color: white;
       box-sizing: border-box;
     }
-    .login-button {
+    .signup-button {
       width: 100%;
       padding: 12px;
-      background-color: #4CAF50;
+      background-color: #2196F3;
       border: none;
       border-radius: 8px;
       color: white;
@@ -53,8 +53,8 @@
       cursor: pointer;
       margin-top: 10px;
     }
-    .login-button:hover {
-      background-color: #45a049;
+    .signup-button:hover {
+      background-color: #1e87dc;
     }
     .back-link {
       display: block;
@@ -72,8 +72,8 @@
   </style>
 </head>
 <body>
-  <div class="login-box" id="login-form">
-    <h2>Login</h2>
+  <div class="signup-box">
+    <h2>Sign Up</h2>
     <div class="form-group">
       <label for="username">Username</label>
       <input type="text" id="username" placeholder="Enter username"/>
@@ -83,19 +83,19 @@
       <input type="password" id="password" placeholder="Enter password"/>
     </div>
     <div id="error-message"></div>
-    <button class="login-button" onclick="login()">Login</button>
+    <button class="signup-button" onclick="signUp()">Sign Up</button>
     <a href="index.html" class="back-link">← Back</a>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
       authDomain: "btchizl.firebaseapp.com",
       projectId: "btchizl",
-      storageBucket: "btchizl.firebasestorage.app",
+      storageBucket: "btchizl.appspot.com",
       messagingSenderId: "113542799682",
       appId: "1:113542799682:web:0b2df380ef6e172e5d68db",
       measurementId: "G-RCQHVSFFQS"
@@ -104,50 +104,32 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Debugging function
-    function debug(message) {
-      console.log(message); // Logs for debugging purpose
-    }
-
-    // Listen for authentication state changes
-    onAuthStateChanged(auth, user => {
-      debug("Auth State Changed: User", user);
-      if (user) {
-        // If logged in, redirect to Chat page
-        debug("User logged in, redirecting to Chat...");
-        window.location.href = "Chat";
-      } else {
-        // If not logged in, show the login form
-        debug("No user logged in, showing login form.");
-        document.getElementById('login-form').style.display = 'block';
-      }
-    });
-
-    window.login = function () {
+    window.signUp = function () {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
       if (!username || !password) {
-        return showError('Both fields are required.');
+        return showError("Both fields are required.");
       }
 
+      // Create a fake email for login based on username
       const email = `${username}@btchizl.com`;
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          // After successful login, redirect to Chat
-          window.location.href = 'Chat';
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // User created successfully
+          window.location.href = "Chat";
         })
         .catch((error) => {
           showError(error.message);
         });
     }
 
-    function showError(msg) {
-      const errorEl = document.getElementById('error-message');
-      errorEl.textContent = msg;
-      errorEl.style.display = 'block';
-      setTimeout(() => errorEl.style.display = 'none', 4000);
+    function showError(message) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => errorDiv.style.display = 'none', 4000);
     }
   </script>
 </body>
