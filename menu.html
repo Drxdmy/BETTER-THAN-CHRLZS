@@ -58,14 +58,15 @@
       font-size: 18px;
     }
 
-    /* Menu Buttons */
+    /* Menu Buttons - Now Horizontal */
     .menu {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       justify-content: center;
       align-items: center;
       flex-grow: 1;
-      gap: 15px;
+      gap: 20px;
+      flex-wrap: wrap;
     }
 
     .menu button {
@@ -74,9 +75,8 @@
       border: none;
       padding: 15px 30px;
       font-size: 18px;
-      min-width: 250px;
+      min-width: 200px;
       border-radius: 8px;
-      margin: 5px;
       cursor: pointer;
       transition: all 0.3s;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -190,7 +190,7 @@
       background-color: #ccc;
     }
 
-    /* Auth Buttons */
+    /* New Auth Buttons Style */
     .auth-buttons {
       position: fixed;
       bottom: 20px;
@@ -198,24 +198,34 @@
       right: 0;
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 10px;
       padding: 10px;
+      align-items: center;
     }
 
-    .auth-buttons button {
-      background-color: #007BFF;
+    .auth-buttons a {
       color: white;
-      padding: 12px 25px;
+      text-decoration: none;
       font-size: 16px;
-      min-width: 120px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: none;
-      transition: background-color 0.3s;
+      transition: color 0.3s;
+      padding: 5px 10px;
     }
 
-    .auth-buttons button:hover {
-      background-color: #0056b3;
+    body.light-mode .auth-buttons a {
+      color: #121212;
+    }
+
+    .auth-buttons a:hover {
+      color: #007BFF;
+    }
+
+    .auth-buttons .divider {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 16px;
+    }
+
+    body.light-mode .auth-buttons .divider {
+      color: rgba(0, 0, 0, 0.5);
     }
 
     /* Status Message */
@@ -253,7 +263,7 @@
     </div>
   </div>
 
-  <!-- Menu Section -->
+  <!-- Menu Section - Now Horizontal -->
   <div class="menu">
     <button id="findFriendBtn" onclick="checkAuth('findFriend.html')">Find Friend</button>
     <button id="chatBtn" onclick="checkAuth('chat.html')">Chat</button>
@@ -262,10 +272,11 @@
   <!-- Light/Dark Mode Toggle -->
   <button class="toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
 
-  <!-- Auth Buttons (shown when not logged in) -->
+  <!-- New Auth Buttons (shown when not logged in) -->
   <div class="auth-buttons" id="authButtons">
-    <button onclick="window.location.href='login.html'">Log In</button>
-    <button onclick="window.location.href='signup.html'">Sign Up</button>
+    <a href="login.html">Log in</a>
+    <span class="divider">|</span>
+    <a href="signup.html">Sign up</a>
   </div>
 
   <!-- Firebase SDK -->
