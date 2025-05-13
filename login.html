@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Log In</title>
+  <title>Login</title>
   <style>
     * {
       box-sizing: border-box;
@@ -89,47 +89,35 @@
     }
 
     .forgot-password {
-      display: block;
-      margin-top: 10px;
       text-align: center;
-      color: #fff;
-      text-decoration: none;
+      margin-top: 10px;
       font-size: 14px;
     }
 
-    .forgot-password:hover {
-      text-decoration: underline;
-    }
-
-    .back-link, .back-to-chat-button {
-      margin-top: 20px;
-      text-align: center;
-      display: block;
+    .forgot-password a {
       color: #bbb;
       text-decoration: none;
-      font-size: 14px;
     }
 
-    .back-link:hover, .back-to-chat-button:hover {
+    .forgot-password a:hover {
       text-decoration: underline;
     }
 
     .back-to-chat-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
       background-color: #333;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 50%;
+      font-size: 16px;
       cursor: pointer;
       color: white;
       border: none;
     }
 
-    #error-message {
-      color: #ff4d4f;
-      margin-top: 12px;
-      text-align: center;
-      display: none;
-      font-size: 14px;
+    .back-to-chat-button:hover {
+      background-color: #444;
     }
 
     .theme-toggle {
@@ -145,6 +133,14 @@
       border-radius: 50%;
     }
 
+    #error-message {
+      color: #ff4d4f;
+      margin-top: 12px;
+      text-align: center;
+      display: none;
+      font-size: 14px;
+    }
+
     @media (max-width: 480px) {
       .login-container {
         padding: 30px 20px;
@@ -154,10 +150,11 @@
 </head>
 <body>
   <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  <button class="back-to-chat-button" onclick="goBackToChat()">←</button>
 
   <div class="login-container">
-    <h2>Log In</h2>
-    <p>Welcome back! Please log in to continue.</p>
+    <h2>Login</h2>
+    <p>Enter your credentials to access your account.</p>
     <div class="form-group">
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="Enter your email">
@@ -167,12 +164,10 @@
       <input type="password" id="password" placeholder="Enter your password">
     </div>
     <div id="error-message"></div>
-    <button class="login-button" onclick="logIn()">Log In</button>
-    <a href="signup.html" class="back-link">Don't have an account? Sign up here</a>
-    <a href="#" class="forgot-password">Forgot Password?</a>
-
-    <!-- Back to Chat Button -->
-    <button class="back-to-chat-button" onclick="goBackToChat()">Back to Chat</button>
+    <button class="login-button" onclick="login()">Login</button>
+    <div class="forgot-password">
+      <a href="#">Forgot your password?</a>
+    </div>
   </div>
 
   <script type="module">
@@ -192,17 +187,17 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    window.logIn = function () {
+    window.login = function () {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
       if (!email || !password) {
-        return showError('Please fill out both fields.');
+        return showError('Please fill out all fields.');
       }
 
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          // Successfully signed in
+          // Successfully logged in
           window.location.href = 'Chat';  // Redirect to Chat page after login
         })
         .catch((error) => {
