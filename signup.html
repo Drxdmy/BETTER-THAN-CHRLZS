@@ -88,35 +88,21 @@
       background-color: #0056b3;
     }
 
-    .back-link, .back-to-chat-button {
-      margin-top: 20px;
-      text-align: center;
-      display: block;
-      color: #bbb;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .back-link:hover, .back-to-chat-button:hover {
-      text-decoration: underline;
-    }
-
     .back-to-chat-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
       background-color: #333;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 50%;
+      font-size: 16px;
       cursor: pointer;
       color: white;
       border: none;
     }
 
-    #error-message {
-      color: #ff4d4f;
-      margin-top: 12px;
-      text-align: center;
-      display: none;
-      font-size: 14px;
+    .back-to-chat-button:hover {
+      background-color: #444;
     }
 
     .theme-toggle {
@@ -132,6 +118,14 @@
       border-radius: 50%;
     }
 
+    #error-message {
+      color: #ff4d4f;
+      margin-top: 12px;
+      text-align: center;
+      display: none;
+      font-size: 14px;
+    }
+
     @media (max-width: 480px) {
       .signup-container {
         padding: 30px 20px;
@@ -141,10 +135,11 @@
 </head>
 <body>
   <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  <button class="back-to-chat-button" onclick="goBackToChat()">←</button>
 
   <div class="signup-container">
     <h2>Sign Up</h2>
-    <p>Create a new account to get started.</p>
+    <p>Create an account to get started.</p>
     <div class="form-group">
       <label for="username">Username</label>
       <input type="text" id="username" placeholder="Enter your username">
@@ -159,10 +154,6 @@
     </div>
     <div id="error-message"></div>
     <button class="signup-button" onclick="signUp()">Sign Up</button>
-    <a href="login.html" class="back-link">Already have an account? Log in here</a>
-
-    <!-- Back to Chat Button -->
-    <button class="back-to-chat-button" onclick="goBackToChat()">Back to Chat</button>
   </div>
 
   <script type="module">
@@ -194,7 +185,7 @@
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Successfully signed up
-          window.location.href = 'Chat';  // Redirect to Chat page after sign up
+          window.location.href = 'Chat';  // Redirect to Chat page after sign-up
         })
         .catch((error) => {
           showError(error.message);
