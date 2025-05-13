@@ -72,7 +72,7 @@
   </style>
 </head>
 <body>
-  <div class="signup-box">
+  <div class="signup-box" id="signup-form">
     <h2>Sign Up</h2>
     <div class="form-group">
       <label for="username">Username</label>
@@ -108,14 +108,14 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Check if the user is already logged in
+    // Check if user is already logged in
     onAuthStateChanged(auth, user => {
       if (user) {
-        // If the user is logged in, hide the sign-up form and buttons
-        document.querySelector('.signup-box').innerHTML = `
-          <h2>You're already logged in!</h2>
-          <p>You can go back to the <a href="Chat">Chat</a> page.</p>
-        `;
+        // If the user is logged in, redirect them to Chat and hide sign-up form
+        window.location.href = "Chat";
+      } else {
+        // If the user is not logged in, show the sign-up form
+        document.getElementById('signup-form').style.display = 'block';
       }
     });
 
@@ -136,7 +136,8 @@
 
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-          window.location.href = 'Chat'; // Redirect to Chat page after successful sign-up
+          // Once signed up, redirect to Chat
+          window.location.href = 'Chat';
         })
         .catch((error) => {
           showError(error.message);
