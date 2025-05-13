@@ -2,51 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Advanced Sign Up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
+    :root {
+      --bg: #121212;
+      --fg: white;
+      --input-bg: #1e1e1e;
+      --accent: #4CAF50;
+    }
+    body.light {
+      --bg: #f0f0f0;
+      --fg: black;
+      --input-bg: #fff;
+      --accent: #4CAF50;
+    }
     body {
-      background-color: #121212;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+      transition: background-color 0.3s, color 0.3s;
     }
     .signup-box {
-      background-color: #1f1f1f;
+      background-color: var(--input-bg);
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
-      width: 360px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      width: 350px;
     }
     h2 {
       text-align: center;
       margin-bottom: 24px;
     }
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     label {
       display: block;
       margin-bottom: 6px;
-      font-weight: bold;
     }
-    input {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select {
       width: 100%;
-      padding: 10px 14px;
+      padding: 12px;
       border: none;
       border-radius: 8px;
       background-color: #2a2a2a;
-      color: white;
-      box-sizing: border-box;
+      color: var(--fg);
     }
-    .signup-button {
+    .signup-button,
+    .google-button {
       width: 100%;
       padding: 12px;
-      background-color: #3a86ff;
+      background-color: var(--accent);
       border: none;
       border-radius: 8px;
       color: white;
@@ -54,51 +70,80 @@
       cursor: pointer;
       margin-top: 10px;
     }
-    .signup-button:disabled {
-      background-color: #666;
-      cursor: not-allowed;
+    .signup-button:hover,
+    .google-button:hover {
+      background-color: #45a049;
     }
-    .message {
-      text-align: center;
+    .back-link,
+    .forgot-link {
+      display: block;
       margin-top: 10px;
-      padding: 8px;
-      border-radius: 8px;
+      text-align: center;
+      color: var(--fg);
+      text-decoration: none;
     }
-    .error {
-      background-color: #ff4d4f;
+    #error-message {
+      color: #ff4d4f;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
     }
-    .success {
-      background-color: #4CAF50;
+    .toggle-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <div class="signup-box">
-    <h2>Advanced Sign Up</h2>
-    <div class="form-group">
-      <label for="email">Email Address</label>
-      <input type="email" id="email" placeholder="Enter your email">
-    </div>
+    <h2>Create an Account</h2>
     <div class="form-group">
       <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Choose a username">
+      <input type="text" id="username" placeholder="Enter username" />
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Enter email" />
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Create password">
+      <input type="password" id="password" placeholder="Enter password" />
     </div>
     <div class="form-group">
-      <label for="confirmPassword">Confirm Password</label>
-      <input type="password" id="confirmPassword" placeholder="Repeat password">
+      <label for="confirm-password">Confirm Password</label>
+      <input type="password" id="confirm-password" placeholder="Re-enter password" />
     </div>
-    <button class="signup-button" id="signupBtn" onclick="signUp()">Sign Up</button>
-    <div id="message" class="message" style="display: none;"></div>
+    <div class="form-group">
+      <label for="security">Security Question (optional)</label>
+      <select id="security">
+        <option value="">Select a question</option>
+        <option value="pet">What is your first pet's name?</option>
+        <option value="school">What was your primary school?</option>
+        <option value="movie">What is your favorite movie?</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <input type="checkbox" id="remember-me" /> <label for="remember-me">Remember me</label>
+    </div>
+    <div class="form-group">
+      <input type="checkbox" id="not-robot" /> <label for="not-robot">I'm not a robot</label>
+    </div>
+    <div id="error-message"></div>
+    <button class="signup-button" onclick="signUp()">Sign Up</button>
+    <button class="google-button" onclick="signUpWithGoogle()"><i class="fab fa-google"></i> Sign Up with Google</button>
+    <a href="Chat" class="back-link">← Back to Chat</a>
+    <a href="#" class="forgot-link">Forgot password?</a>
+    <div class="toggle-container">
+      <label for="theme-toggle">Dark Mode</label>
+      <input type="checkbox" id="theme-toggle" checked />
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
@@ -106,78 +151,59 @@
       projectId: "btchizl",
       storageBucket: "btchizl.appspot.com",
       messagingSenderId: "113542799682",
-      appId: "1:113542799682:web:0b2df380ef6e172e5d68db"
+      appId: "1:113542799682:web:0b2df380ef6e172e5d68db",
+      measurementId: "G-RCQHVSFFQS"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-    async function signUp() {
-      const email = document.getElementById("email").value.trim();
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-      const msgBox = document.getElementById("message");
-      const signUpBtn = document.getElementById("signupBtn");
+    window.signUp = function () {
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const robotChecked = document.getElementById('not-robot').checked;
 
-      msgBox.style.display = "none";
-      msgBox.className = "message";
-      signUpBtn.disabled = true;
-
-      // Basic validations
-      if (!email || !username || !password || !confirmPassword) {
-        return showMessage("All fields are required.", "error");
-      }
-      if (!validateEmail(email)) {
-        return showMessage("Invalid email format.", "error");
-      }
-      if (password.length < 6) {
-        return showMessage("Password must be at least 6 characters.", "error");
+      if (!username || !email || !password || !confirmPassword) {
+        return showError('All fields are required.');
       }
       if (password !== confirmPassword) {
-        return showMessage("Passwords do not match.", "error");
+        return showError('Passwords do not match.');
+      }
+      if (!robotChecked) {
+        return showError('Please confirm you are not a robot.');
       }
 
-      // Check if username already exists
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("username", "==", username));
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        return showMessage("Username already taken.", "error");
-      }
-
-      // Create user
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const uid = userCredential.user.uid;
-
-        await setDoc(doc(db, "users", uid), {
-          username: username,
-          email: email,
-          createdAt: new Date()
-        });
-
-        showMessage("Account created! Redirecting...", "success");
-        setTimeout(() => window.location.href = "Chat", 1500);
-      } catch (error) {
-        showMessage(error.message, "error");
-      } finally {
-        signUpBtn.disabled = false;
-      }
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          alert("Successfully signed up!");
+          window.location.href = "Chat";
+        })
+        .catch((error) => showError(error.message));
     }
 
-    function showMessage(text, type) {
-      const msgBox = document.getElementById("message");
-      msgBox.textContent = text;
-      msgBox.classList.add(type);
-      msgBox.style.display = "block";
-      document.getElementById("signupBtn").disabled = false;
+    window.signUpWithGoogle = function () {
+      signInWithPopup(auth, provider)
+        .then(() => {
+          alert("Signed in with Google!");
+          window.location.href = "Chat";
+        })
+        .catch(error => showError(error.message));
     }
 
-    function validateEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    function showError(msg) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+      setTimeout(() => errorEl.style.display = 'none', 4000);
     }
+
+    const themeToggle = document.getElementById("theme-toggle");
+    themeToggle.addEventListener("change", () => {
+      document.body.classList.toggle("light");
+    });
   </script>
 </body>
 </html>
