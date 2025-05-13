@@ -219,7 +219,7 @@
         sessionStorage.setItem('justLoggedIn', 'true');
         
         // Redirect to chat page
-        window.location.href = 'chat.html';
+        window.location.href = 'Chat';
         
       } catch (e) {
         showError('Error accessing account data');
@@ -247,7 +247,7 @@
       
       // If already logged in, redirect to chat
       if (localStorage.getItem('currentUser')) {
-        window.location.href = 'chat.html';
+        window.location.href = 'Chat';
       }
       
       // Check for signup redirect with prefilled username
