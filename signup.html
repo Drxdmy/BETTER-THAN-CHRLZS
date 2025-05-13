@@ -18,6 +18,12 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.light-mode {
+      background-color: #f4f4f9;
+      color: #333;
     }
 
     .signup-container {
@@ -27,6 +33,12 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
       width: 100%;
       max-width: 450px;
+      transition: background-color 0.3s;
+    }
+
+    body.light-mode .signup-container {
+      background-color: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     }
 
     .signup-container h2 {
@@ -42,6 +54,10 @@
       margin-bottom: 30px;
     }
 
+    body.light-mode .signup-container p {
+      color: #777;
+    }
+
     .form-group {
       margin-bottom: 20px;
     }
@@ -52,6 +68,10 @@
       font-weight: 500;
       font-size: 14px;
       color: #ddd;
+    }
+
+    body.light-mode .form-group label {
+      color: #555;
     }
 
     .form-group input {
@@ -65,10 +85,20 @@
       transition: all 0.2s ease;
     }
 
+    body.light-mode .form-group input {
+      background-color: #f0f0f0;
+      color: #333;
+      border-color: #ddd;
+    }
+
     .form-group input:focus {
       outline: none;
-      border-color: #4CAF50;
+      border-color: #007BFF;
       background-color: #303030;
+    }
+
+    body.light-mode .form-group input:focus {
+      background-color: #f8f8f8;
     }
 
     .signup-button {
@@ -88,6 +118,11 @@
       background-color: #0056b3;
     }
 
+    .signup-button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+    }
+
     .back-to-chat-button {
       position: absolute;
       top: 20px;
@@ -99,10 +134,20 @@
       cursor: pointer;
       color: white;
       border: none;
+      transition: background-color 0.2s;
+    }
+
+    body.light-mode .back-to-chat-button {
+      background-color: #ddd;
+      color: #333;
     }
 
     .back-to-chat-button:hover {
       background-color: #444;
+    }
+
+    body.light-mode .back-to-chat-button:hover {
+      background-color: #ccc;
     }
 
     .theme-toggle {
@@ -118,12 +163,34 @@
       border-radius: 50%;
     }
 
+    body.light-mode .theme-toggle {
+      color: #333;
+    }
+
     #error-message {
       color: #ff4d4f;
       margin-top: 12px;
       text-align: center;
       display: none;
       font-size: 14px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: rgba(255, 77, 79, 0.1);
+    }
+
+    body.light-mode #error-message {
+      background-color: rgba(255, 77, 79, 0.05);
+    }
+
+    #success-message {
+      color: #4CAF50;
+      margin-top: 12px;
+      text-align: center;
+      display: none;
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: rgba(76, 175, 80, 0.1);
     }
 
     @media (max-width: 480px) {
@@ -133,9 +200,9 @@
     }
   </style>
 </head>
-<body>
+<body class="dark-mode">
   <!-- Night/Day Mode Toggle Button -->
-  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
 
   <!-- Back to Chat Button -->
   <button class="back-to-chat-button" onclick="goBackToChat()">←</button>
@@ -147,28 +214,32 @@
     <!-- Username, Email, and Password Inputs -->
     <div class="form-group">
       <label for="username">Username</label>
-      <input type="text" id="username" placeholder="Enter your username">
+      <input type="text" id="username" placeholder="Enter your username" autocomplete="username">
     </div>
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" id="email" placeholder="Enter your email">
+      <input type="email" id="email" placeholder="Enter your email" autocomplete="email">
     </div>
     <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter your password">
+      <label for="password">Password (min 6 characters)</label>
+      <input type="password" id="password" placeholder="Enter your password" autocomplete="new-password" minlength="6">
     </div>
 
-    <!-- Error Message -->
+    <!-- Error and Success Messages -->
     <div id="error-message"></div>
+    <div id="success-message"></div>
 
     <!-- Sign Up Button -->
-    <button class="signup-button" onclick="signUp()">Sign Up</button>
+    <button class="signup-button" id="signupButton" onclick="signUp()">Sign Up</button>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  
+  <script>
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
       authDomain: "btchizl.firebaseapp.com",
@@ -179,58 +250,146 @@
       measurementId: "G-RCQHVSFFQS"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    window.signUp = function () {
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+    // DOM elements
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const signupButton = document.getElementById('signupButton');
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
+    const themeToggle = document.getElementById('themeToggle');
 
+    // Sign up function
+    async function signUp() {
+      const username = usernameInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      // Validate inputs
       if (!username || !email || !password) {
         return showError('Please fill out all fields.');
       }
 
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Successfully signed up
-          window.location.href = 'menu';  // Redirect to Chat page after sign-up
-        })
-        .catch((error) => {
-          showError(error.message);
+      if (password.length < 6) {
+        return showError('Password must be at least 6 characters.');
+      }
+
+      if (!validateEmail(email)) {
+        return showError('Please enter a valid email address.');
+      }
+
+      // Disable button during processing
+      signupButton.disabled = true;
+      signupButton.textContent = 'Creating account...';
+
+      try {
+        // Create user with email/password
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        
+        // Store additional user data in Firestore
+        await db.collection('users').doc(userCredential.user.uid).set({
+          username: username,
+          email: email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        // Update user profile with display name
+        await userCredential.user.updateProfile({
+          displayName: username
+        });
+
+        // Show success message
+        showSuccess('Account created successfully! Redirecting...');
+        
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = 'menu';
+        }, 1500);
+
+      } catch (error) {
+        // Handle errors
+        let errorMessage = error.message;
+        
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = 'This email is already registered.';
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = 'Password should be at least 6 characters.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Please enter a valid email address.';
+        }
+        
+        showError(errorMessage);
+        signupButton.disabled = false;
+        signupButton.textContent = 'Sign Up';
+      }
     }
 
+    // Validate email format
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    // Show error message
     function showError(msg) {
-      const errorEl = document.getElementById('error-message');
-      errorEl.textContent = msg;
-      errorEl.style.display = 'block';
-      setTimeout(() => errorEl.style.display = 'none', 4000);
+      errorMessage.textContent = msg;
+      errorMessage.style.display = 'block';
+      successMessage.style.display = 'none';
+      setTimeout(() => {
+        errorMessage.style.display = 'none';
+      }, 4000);
+    }
+
+    // Show success message
+    function showSuccess(msg) {
+      successMessage.textContent = msg;
+      successMessage.style.display = 'block';
+      errorMessage.style.display = 'none';
     }
 
     // Back to Chat Button Functionality
     function goBackToChat() {
-      window.location.href = 'menu'; // Redirect to Chat page
+      window.location.href = 'menu';
     }
 
     // Toggle Theme Functionality
     function toggleTheme() {
       const body = document.body;
-      const themeToggleButton = document.querySelector('.theme-toggle');
-      const currentTheme = body.style.backgroundColor;
+      body.classList.toggle('dark-mode');
+      body.classList.toggle('light-mode');
+      localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+      
+      // Update theme toggle button icon
+      themeToggle.textContent = body.classList.contains('dark-mode') ? '🌙' : '🌞';
+    }
 
-      if (currentTheme === "rgb(15, 15, 15)") { // Dark Mode
-        body.style.backgroundColor = "#f4f4f9"; // Light Mode
-        document.querySelector('.signup-container').style.backgroundColor = "#ffffff";
-        themeToggleButton.textContent = "🌙";
-        document.body.style.color = "#333";
-      } else {
-        body.style.backgroundColor = "#0f0f0f"; // Dark Mode
-        document.querySelector('.signup-container').style.backgroundColor = "#1c1c1e";
-        themeToggleButton.textContent = "🌞";
-        document.body.style.color = "#fff";
+    // Initialize theme from localStorage
+    function initTheme() {
+      const darkMode = localStorage.getItem('darkMode') !== 'false';
+      if (!darkMode) {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        themeToggle.textContent = '🌞';
       }
     }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      
+      // Allow sign up on Enter key
+      passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          signUp();
+        }
+      });
+    });
   </script>
 </body>
 </html>
