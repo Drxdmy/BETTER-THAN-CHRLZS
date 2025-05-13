@@ -80,6 +80,7 @@
       border-radius: 50%;
       cursor: pointer;
       font-size: 20px;
+      border: none;
     }
 
     .toggle:focus {
@@ -141,7 +142,7 @@
     <!-- Profile and Dropdown Menu -->
     <div class="profile" onclick="toggleDropdown()">
       <span id="usernameDisplay">Guest</span>
-      <img src="profile_icon.png" alt="Profile Icon" id="profileIcon">
+      <img src="default_profile_icon.png" alt="Profile Icon" id="profileIcon">
     </div>
     <div class="dropdown" id="dropdownMenu">
       <a href="#" onclick="signOut()">Sign Out</a>
@@ -155,7 +156,7 @@
   </div>
 
   <!-- Light/Dark Mode Toggle -->
-  <div class="toggle" onclick="toggleDarkMode()">🌙</div>
+  <button class="toggle" onclick="toggleDarkMode()">🌙</button>
 
   <!-- Firebase SDK Integration -->
   <script type="module">
@@ -178,9 +179,10 @@
     // Check user sign-in state
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Show username and update profile icon
+        // Show username and update profile icon if available
         document.getElementById('usernameDisplay').textContent = user.displayName || 'Username';
-        document.getElementById('profileIcon').src = 'profile_icon.png'; // Replace with actual profile image
+        const profileImage = user.photoURL || 'default_profile_icon.png'; // Default if no custom image
+        document.getElementById('profileIcon').src = profileImage;
       }
     });
 
