@@ -134,12 +134,17 @@
   </style>
 </head>
 <body>
+  <!-- Night/Day Mode Toggle Button -->
   <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+  <!-- Back to Chat Button -->
   <button class="back-to-chat-button" onclick="goBackToChat()">←</button>
 
   <div class="signup-container">
     <h2>Sign Up</h2>
     <p>Create an account to get started.</p>
+
+    <!-- Username, Email, and Password Inputs -->
     <div class="form-group">
       <label for="username">Username</label>
       <input type="text" id="username" placeholder="Enter your username">
@@ -152,7 +157,11 @@
       <label for="password">Password</label>
       <input type="password" id="password" placeholder="Enter your password">
     </div>
+
+    <!-- Error Message -->
     <div id="error-message"></div>
+
+    <!-- Sign Up Button -->
     <button class="signup-button" onclick="signUp()">Sign Up</button>
   </div>
 
