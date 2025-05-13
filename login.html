@@ -69,6 +69,12 @@
       text-align: center;
       display: none;
     }
+    #success-message {
+      color: #4CAF50;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -83,13 +89,14 @@
       <input type="password" id="password" placeholder="Enter password"/>
     </div>
     <div id="error-message"></div>
+    <div id="success-message"></div>
     <button class="login-button" onclick="login()">Login</button>
-    <a href="signup.html" class="back-link">Don't have an account?</a>
+    <a href="signup.html" class="back-link">Don't have an account? Sign up</a>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
@@ -104,6 +111,13 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    // Check if already logged in and redirect to Chat
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        window.location.href = "Chat"; // Redirect if logged in
+      }
+    });
+
     window.login = function () {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
@@ -116,18 +130,28 @@
 
       signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-          window.location.href = 'Chat';
+          showSuccess('Logged in successfully!');
+          setTimeout(() => {
+            window.location.href = 'Chat';
+          }, 2000); // Wait 2 seconds before redirect
         })
         .catch((error) => {
           showError(error.message);
         });
-    };
+    }
 
     function showError(msg) {
       const errorEl = document.getElementById('error-message');
       errorEl.textContent = msg;
       errorEl.style.display = 'block';
       setTimeout(() => errorEl.style.display = 'none', 4000);
+    }
+
+    function showSuccess(msg) {
+      const successEl = document.getElementById('success-message');
+      successEl.textContent = msg;
+      successEl.style.display = 'block';
+      setTimeout(() => successEl.style.display = 'none', 4000);
     }
   </script>
 </body>
