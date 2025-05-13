@@ -88,12 +88,13 @@
     </div>
     <div id="error-message"></div>
     <button class="signup-button" onclick="signUp()">Sign Up</button>
-    <a href="index.html" class="back-link">← Back</a>
+    <!-- Updated 'Back' link to redirect to Chat page -->
+    <a href="Chat" class="back-link">← Back</a>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
@@ -107,6 +108,13 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+
+    // Redirect if already logged in
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        window.location.href = "Chat";
+      }
+    });
 
     window.signUp = function () {
       const username = document.getElementById('username').value.trim();
@@ -125,14 +133,10 @@
 
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-          window.location.href = 'Chat'; // ✅ Redirect to correct Chat page
+          window.location.href = 'Chat';
         })
         .catch((error) => {
-          if (error.code === 'auth/email-already-in-use') {
-            showError('Username already exists.');
-          } else {
-            showError(error.message);
-          }
+          showError(error.message);
         });
     };
 
