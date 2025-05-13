@@ -83,13 +83,13 @@
       <input type="password" id="password" placeholder="Enter password"/>
     </div>
     <div id="error-message"></div>
-    <button class="login-button" onclick="login()">Log In</button>
-    <a href="index.html" class="back-link">← Back</a>
+    <button class="login-button" onclick="login()">Login</button>
+    <a href="signup.html" class="back-link">Don't have an account?</a>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
@@ -104,13 +104,6 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Auto-redirect if already logged in
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        window.location.href = "Chat";
-      }
-    });
-
     window.login = function () {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
@@ -123,14 +116,10 @@
 
       signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-          window.location.href = 'Chat'; // ✅ Actual redirect
+          window.location.href = 'Chat';
         })
         .catch((error) => {
-          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-            showError('Username or password incorrect.');
-          } else {
-            showError(error.message);
-          }
+          showError(error.message);
         });
     };
 
