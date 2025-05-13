@@ -163,6 +163,15 @@
       color: white;
     }
 
+    .dropdown a.delete-account {
+      color: #ff4d4f;
+    }
+
+    .dropdown a.delete-account:hover {
+      background-color: #ff4d4f;
+      color: white;
+    }
+
     /* Back Button */
     .back-button {
       position: absolute;
@@ -242,6 +251,150 @@
       display: none;
       z-index: 1000;
     }
+
+    /* Friend Request Badge */
+    .request-badge {
+      background-color: #007BFF;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+      margin-left: 5px;
+      display: none;
+    }
+
+    /* Friend Requests Modal */
+    .request-list {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #1e1e1e;
+      width: 80%;
+      max-width: 400px;
+      max-height: 60vh;
+      overflow-y: auto;
+      border-radius: 10px;
+      padding: 15px;
+      z-index: 1000;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    body.light-mode .request-list {
+      background-color: #fff;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
+    .request-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #2a2a2c;
+      border-radius: 8px;
+    }
+
+    body.light-mode .request-item {
+      background-color: #f5f5f5;
+    }
+
+    .request-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 10px;
+      background-color: #007BFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .request-username {
+      flex-grow: 1;
+      font-weight: 500;
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .accept-btn, .decline-btn {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .accept-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .decline-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    /* Confirmation Dialog */
+    .confirmation-dialog {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 1001;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    body.light-mode .confirmation-dialog {
+      background-color: #fff;
+    }
+
+    .confirmation-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .confirm-btn, .cancel-btn {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .confirm-btn {
+      background-color: #ff4d4f;
+      color: white;
+    }
+
+    .cancel-btn {
+      background-color: #007BFF;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -260,13 +413,15 @@
     </div>
     <div class="dropdown" id="dropdownMenu">
       <a href="profile.html">My Profile</a>
+      <a href="#" id="friendRequestsBtn">Friend Requests <span id="requestCount" class="request-badge">0</span></a>
+      <a href="#" class="delete-account" onclick="confirmAccountDeletion()">Delete Account</a>
       <a href="#" onclick="signOut()">Sign Out</a>
     </div>
   </div>
 
   <!-- Menu Section -->
   <div class="menu">
-    <button id="findFriendBtn" onclick="checkAuth('findFriend.html')">Find Friend</button>
+    <button id="findFriendBtn" onclick="window.location.href='search.html'">Find Friend</button>
     <button id="chatBtn" onclick="checkAuth('chat.html')">Chat</button>
   </div>
 
@@ -278,6 +433,23 @@
     <a href="login.html">Log in</a>
     <span class="divider">|</span>
     <a href="signup.html">Sign up</a>
+  </div>
+
+  <!-- Friend Requests Modal -->
+  <div class="overlay" id="overlay"></div>
+  <div class="request-list" id="requestList">
+    <h3 style="margin-bottom: 15px; text-align: center;">Friend Requests</h3>
+    <div id="requestsContainer"></div>
+  </div>
+
+  <!-- Account Deletion Confirmation -->
+  <div class="confirmation-dialog" id="deleteAccountDialog">
+    <h3>Delete Account</h3>
+    <p>Are you sure you want to delete your account? This action cannot be undone!</p>
+    <div class="confirmation-buttons">
+      <button class="confirm-btn" onclick="deleteAccount()">Delete</button>
+      <button class="cancel-btn" onclick="closeDeleteDialog()">Cancel</button>
+    </div>
   </div>
 
   <!-- Firebase SDK -->
@@ -312,72 +484,268 @@
     const chatBtn = document.getElementById('chatBtn');
     const statusMessage = document.getElementById('statusMessage');
     const themeToggle = document.getElementById('themeToggle');
+    const friendRequestsBtn = document.getElementById('friendRequestsBtn');
+    const requestCount = document.getElementById('requestCount');
+    const requestList = document.getElementById('requestList');
+    const overlay = document.getElementById('overlay');
+    const requestsContainer = document.getElementById('requestsContainer');
+    const deleteAccountDialog = document.getElementById('deleteAccountDialog');
 
-    // Check authentication state - UPDATED TO ONLY SHOW USERNAME
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        profileSection.style.display = 'flex';
-        authButtons.style.display = 'none';
+    // Current user and friends data
+    let currentUser = null;
+    let friendRequests = [];
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initAuth();
+      
+      // Event listeners
+      profileSection.addEventListener('click', toggleDropdown);
+      document.addEventListener('click', closeDropdown);
+      friendRequestsBtn.addEventListener('click', showFriendRequests);
+      overlay.addEventListener('click', closeModals);
+    });
+
+    function initAuth() {
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          currentUser = user;
+          profileSection.style.display = 'flex';
+          authButtons.style.display = 'none';
+          await loadUserProfile();
+          loadFriendRequests();
+        } else {
+          profileSection.style.display = 'none';
+          authButtons.style.display = 'flex';
+        }
+      });
+    }
+
+    async function loadUserProfile() {
+      try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
         
-        try {
-          // 1. Get username from Firestore
-          const userDoc = await db.collection('users').doc(user.uid).get();
-          let username = 'User';
+        if (userDoc.exists) {
+          // Set username
+          const userData = userDoc.data();
+          usernameDisplay.textContent = userData.username || 'User';
           
-          if (userDoc.exists) {
-            username = userDoc.data().username || 'User';
+          // Set profile picture
+          if (userData.photoURL) {
+            profileIcon.src = userData.photoURL;
+          } else {
+            createAvatarFromUsername(userData.username || 'User');
           }
-          
-          // 2. Set username display (never shows email)
-          usernameDisplay.textContent = username;
 
-          // 3. Welcome message
           if (sessionStorage.getItem('justLoggedIn')) {
-            showStatusMessage(`Welcome, ${username}!`);
+            showStatusMessage(`Welcome back, ${usernameDisplay.textContent}!`);
             sessionStorage.removeItem('justLoggedIn');
           }
+        }
+      } catch (error) {
+        console.error("Error loading user profile:", error);
+      }
+    }
 
-          // 4. Profile picture
-          if (user.photoURL) {
-            profileIcon.src = user.photoURL;
+    function createAvatarFromUsername(username) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 40;
+      canvas.height = 40;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#007BFF';
+      ctx.fillRect(0, 0, 40, 40);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '20px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(username.charAt(0).toUpperCase(), 20, 20);
+      profileIcon.src = canvas.toDataURL();
+    }
+
+    async function loadFriendRequests() {
+      try {
+        const snapshot = await db.collection('friendRequests')
+          .where('receiverId', '==', currentUser.uid)
+          .where('status', '==', 'pending')
+          .get();
+        
+        friendRequests = [];
+        const promises = [];
+        
+        snapshot.forEach(doc => {
+          const request = {
+            id: doc.id,
+            ...doc.data()
+          };
+          friendRequests.push(request);
+          
+          // Get sender info for each request
+          promises.push(
+            db.collection('users').doc(request.senderId).get()
+              .then(userDoc => {
+                request.sender = userDoc.data();
+              })
+          );
+        });
+        
+        await Promise.all(promises);
+        updateRequestCount();
+      } catch (error) {
+        console.error("Error loading friend requests:", error);
+      }
+    }
+
+    function updateRequestCount() {
+      requestCount.textContent = friendRequests.length;
+      requestCount.style.display = friendRequests.length > 0 ? 'inline-block' : 'none';
+    }
+
+    function showFriendRequests(e) {
+      e.preventDefault();
+      requestsContainer.innerHTML = '';
+      
+      if (friendRequests.length === 0) {
+        requestsContainer.innerHTML = '<p style="text-align: center;">No pending requests</p>';
+      } else {
+        friendRequests.forEach(request => {
+          const requestItem = document.createElement('div');
+          requestItem.className = 'request-item';
+          
+          const userInfo = document.createElement('div');
+          userInfo.style.display = 'flex';
+          userInfo.style.alignItems = 'center';
+          userInfo.style.gap = '10px';
+          
+          const avatar = document.createElement('div');
+          avatar.className = 'request-avatar';
+          
+          if (request.sender.photoURL) {
+            avatar.style.backgroundImage = `url(${request.sender.photoURL})`;
+            avatar.style.backgroundSize = 'cover';
           } else {
-            // Create avatar with username's first letter
-            const canvas = document.createElement('canvas');
-            canvas.width = 40;
-            canvas.height = 40;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#007BFF';
-            ctx.fillRect(0, 0, 40, 40);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = '20px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(username.charAt(0).toUpperCase(), 20, 20);
-            profileIcon.src = canvas.toDataURL();
+            avatar.textContent = request.sender.username.charAt(0).toUpperCase();
           }
           
-        } catch (error) {
-          console.error("Error loading user data:", error);
-          usernameDisplay.textContent = 'User';
-        }
-      } else {
-        profileSection.style.display = 'none';
-        authButtons.style.display = 'flex';
+          const username = document.createElement('span');
+          username.className = 'request-username';
+          username.textContent = request.sender.username;
+          
+          userInfo.appendChild(avatar);
+          userInfo.appendChild(username);
+          
+          const actions = document.createElement('div');
+          actions.className = 'request-actions';
+          
+          const acceptBtn = document.createElement('button');
+          acceptBtn.className = 'accept-btn';
+          acceptBtn.textContent = 'Accept';
+          acceptBtn.onclick = () => handleRequest(request.id, true);
+          
+          const declineBtn = document.createElement('button');
+          declineBtn.className = 'decline-btn';
+          declineBtn.textContent = 'Decline';
+          declineBtn.onclick = () => handleRequest(request.id, false);
+          
+          actions.appendChild(acceptBtn);
+          actions.appendChild(declineBtn);
+          
+          requestItem.appendChild(userInfo);
+          requestItem.appendChild(actions);
+          requestsContainer.appendChild(requestItem);
+        });
       }
-    });
+      
+      requestList.style.display = 'block';
+      overlay.style.display = 'block';
+    }
 
-    // Toggle dropdown menu
-    profileSection.addEventListener('click', (e) => {
+    async function handleRequest(requestId, accept) {
+      try {
+        const batch = db.batch();
+        const requestRef = db.collection('friendRequests').doc(requestId);
+        
+        batch.update(requestRef, {
+          status: accept ? 'accepted' : 'declined',
+          respondedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        if (accept) {
+          const request = friendRequests.find(r => r.id === requestId);
+          
+          // Add to receiver's friends
+          const receiverFriendsRef = db.collection('friends').doc(currentUser.uid);
+          batch.set(receiverFriendsRef, {
+            friendIds: firebase.firestore.FieldValue.arrayUnion(request.senderId)
+          }, { merge: true });
+          
+          // Add to sender's friends
+          const senderFriendsRef = db.collection('friends').doc(request.senderId);
+          batch.set(senderFriendsRef, {
+            friendIds: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+          }, { merge: true });
+        }
+        
+        await batch.commit();
+        await loadFriendRequests();
+        showFriendRequests({ preventDefault: () => {} }); // Refresh the view
+      } catch (error) {
+        console.error("Error handling friend request:", error);
+        showStatusMessage('Error processing request', true);
+      }
+    }
+
+    function confirmAccountDeletion() {
+      deleteAccountDialog.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeDeleteDialog() {
+      deleteAccountDialog.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    async function deleteAccount() {
+      try {
+        const user = auth.currentUser;
+        
+        // Delete user data from Firestore
+        await db.collection('users').doc(user.uid).delete();
+        
+        // Delete user from Authentication
+        await user.delete();
+        
+        showStatusMessage('Account deleted successfully');
+        setTimeout(() => window.location.href = 'index.html', 1500);
+      } catch (error) {
+        console.error("Error deleting account:", error);
+        
+        if (error.code === 'auth/requires-recent-login') {
+          showStatusMessage('Please sign in again to confirm deletion', true);
+          setTimeout(() => window.location.href = 'login.html', 2000);
+        } else {
+          showStatusMessage('Error deleting account: ' + error.message, true);
+        }
+        
+        closeDeleteDialog();
+      }
+    }
+
+    function toggleDropdown(e) {
       e.stopPropagation();
       dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-    });
+    }
 
-    // Close dropdown when clicking elsewhere
-    document.addEventListener('click', () => {
+    function closeDropdown() {
       dropdownMenu.style.display = 'none';
-    });
+    }
 
-    // Sign out function
+    function closeModals() {
+      requestList.style.display = 'none';
+      deleteAccountDialog.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
     function signOut() {
       auth.signOut()
         .then(() => {
@@ -389,7 +757,6 @@
         });
     }
 
-    // Check authentication before navigation
     function checkAuth(page) {
       auth.onAuthStateChanged((user) => {
         if (user) {
@@ -401,7 +768,6 @@
       });
     }
 
-    // Show status message
     function showStatusMessage(message, isError = false) {
       statusMessage.textContent = message;
       statusMessage.style.backgroundColor = isError ? '#ff4d4f' : '#4CAF50';
@@ -411,7 +777,6 @@
       }, 3000);
     }
 
-    // Toggle dark/light mode
     function toggleDarkMode() {
       const body = document.body;
       const isLight = body.classList.contains('light-mode');
@@ -429,7 +794,6 @@
       }
     }
 
-    // Initialize theme from localStorage
     function initTheme() {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const darkModeSetting = localStorage.getItem('darkMode');
@@ -452,17 +816,6 @@
         themeToggle.textContent = '🌞';
       }
     }
-
-    // Initialize page
-    document.addEventListener('DOMContentLoaded', () => {
-      initTheme();
-      
-      // Disable buttons if not logged in
-      auth.onAuthStateChanged((user) => {
-        findFriendBtn.disabled = !user;
-        chatBtn.disabled = !user;
-      });
-    });
   </script>
 </body>
 </html>
