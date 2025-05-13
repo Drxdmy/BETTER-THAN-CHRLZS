@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up</title>
+  <title>Log In</title>
   <style>
     body {
       background-color: #121212;
@@ -15,7 +15,7 @@
       height: 100vh;
       margin: 0;
     }
-    .signup-box {
+    .login-box {
       background-color: #1e1e1e;
       padding: 40px;
       border-radius: 12px;
@@ -42,7 +42,7 @@
       color: white;
       box-sizing: border-box;
     }
-    .signup-button {
+    .login-button {
       width: 100%;
       padding: 12px;
       background-color: #4CAF50;
@@ -53,7 +53,7 @@
       cursor: pointer;
       margin-top: 10px;
     }
-    .signup-button:hover {
+    .login-button:hover {
       background-color: #45a049;
     }
     .back-link {
@@ -72,8 +72,8 @@
   </style>
 </head>
 <body>
-  <div class="signup-box">
-    <h2>Sign Up</h2>
+  <div class="login-box">
+    <h2>Log In</h2>
     <div class="form-group">
       <label for="username">Username</label>
       <input type="text" id="username" placeholder="Enter username"/>
@@ -82,19 +82,15 @@
       <label for="password">Password</label>
       <input type="password" id="password" placeholder="Enter password"/>
     </div>
-    <div class="form-group">
-      <label for="confirm-password">Confirm Password</label>
-      <input type="password" id="confirm-password" placeholder="Re-enter password"/>
-    </div>
     <div id="error-message"></div>
-    <button class="signup-button" onclick="signUp()">Sign Up</button>
+    <button class="login-button" onclick="logIn()">Log In</button>
     <!-- Updated 'Back' link to redirect to Chat page -->
     <a href="Chat" class="back-link">← Back</a>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
@@ -113,30 +109,25 @@
     onAuthStateChanged(auth, user => {
       if (user) {
         // Only redirect if you're logged in to the Chat page
-        if (window.location.pathname === "/signup.html") {
+        if (window.location.pathname === "/login.html") {
           window.location.href = "Chat";
         }
       }
     });
 
-    window.signUp = function () {
+    window.logIn = function () {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
 
-      if (!username || !password || !confirmPassword) {
+      if (!username || !password) {
         return showError('All fields are required.');
-      }
-
-      if (password !== confirmPassword) {
-        return showError('Passwords do not match.');
       }
 
       const email = `${username}@btchizl.com`;
 
-      createUserWithEmailAndPassword(auth, email, password)
+      signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-          window.location.href = 'Chat'; // Redirect after sign-up
+          window.location.href = 'Chat'; // Redirect after login
         })
         .catch((error) => {
           showError(error.message);
