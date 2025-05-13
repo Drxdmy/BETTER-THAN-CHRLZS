@@ -88,7 +88,7 @@
     </div>
     <div id="error-message"></div>
     <button class="signup-button" onclick="signUp()">Sign Up</button>
-    <a href="Chat" class="back-link">← Back</a>
+    <a href="Chat" class="back-link">← Back to Chat</a>
   </div>
 
   <script type="module">
@@ -108,10 +108,14 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Redirect if already logged in, but prevent instant redirect on page load
+    // Check if the user is already logged in
     onAuthStateChanged(auth, user => {
-      if (user && window.location.pathname === "/signup.html") {
-        window.location.href = "Chat"; // Redirect only after sign-up if logged in
+      if (user) {
+        // If the user is logged in, hide the sign-up form and buttons
+        document.querySelector('.signup-box').innerHTML = `
+          <h2>You're already logged in!</h2>
+          <p>You can go back to the <a href="Chat">Chat</a> page.</p>
+        `;
       }
     });
 
@@ -132,12 +136,12 @@
 
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-          window.location.href = 'Chat'; // Redirect to Chat after successful sign-up
+          window.location.href = 'Chat'; // Redirect to Chat page after successful sign-up
         })
         .catch((error) => {
           showError(error.message);
         });
-    };
+    }
 
     function showError(msg) {
       const errorEl = document.getElementById('error-message');
