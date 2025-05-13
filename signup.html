@@ -88,36 +88,55 @@
     </div>
     <div id="error-message"></div>
     <button class="signup-button" onclick="signUp()">Sign Up</button>
-    <a href="Chat" class="back-link">← Back</a>
+    <a href="index.html" class="back-link">← Back</a>
   </div>
 
-  <script>
-    function signUp() {
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
+      authDomain: "btchizl.firebaseapp.com",
+      projectId: "btchizl",
+      storageBucket: "btchizl.firebasestorage.app",
+      messagingSenderId: "113542799682",
+      appId: "1:113542799682:web:0b2df380ef6e172e5d68db",
+      measurementId: "G-RCQHVSFFQS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Redirect if already logged in
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        window.location.href = "chat.html";
+      }
+    });
+
+    window.signUp = function () {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirm-password').value;
 
       if (!username || !password || !confirmPassword) {
-        showError('All fields are required.');
-        return;
+        return showError('All fields are required.');
       }
 
       if (password !== confirmPassword) {
-        showError('Passwords do not match.');
-        return;
+        return showError('Passwords do not match.');
       }
 
-      let users = JSON.parse(localStorage.getItem('users') || '{}');
+      const email = `${username}@btchizl.com`;
 
-      if (users[username]) {
-        showError('Username already in use, please try again.');
-        return;
-      }
-
-      users[username] = password;
-      localStorage.setItem('users', JSON.stringify(users));
-      localStorage.setItem('currentUser', username);
-      window.location.href = 'Chat';
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          window.location.href = 'chat.html';
+        })
+        .catch((error) => {
+          showError(error.message);
+        });
     }
 
     function showError(msg) {
