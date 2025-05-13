@@ -93,7 +93,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
@@ -107,13 +107,6 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-
-    // Redirect if already logged in
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        window.location.href = "Chat";
-      }
-    });
 
     window.signUp = function () {
       const username = document.getElementById('username').value.trim();
@@ -132,12 +125,16 @@
 
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-          window.location.href = 'Chat';
+          window.location.href = 'Chat'; // ✅ Redirect to correct Chat page
         })
         .catch((error) => {
-          showError(error.message);
+          if (error.code === 'auth/email-already-in-use') {
+            showError('Username already exists.');
+          } else {
+            showError(error.message);
+          }
         });
-    }
+    };
 
     function showError(msg) {
       const errorEl = document.getElementById('error-message');
