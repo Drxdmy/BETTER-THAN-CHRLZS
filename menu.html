@@ -14,6 +14,12 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.light-mode {
+      background-color: #f5f5f5;
+      color: #121212;
     }
 
     /* Header Section */
@@ -29,6 +35,13 @@
       display: flex;
       align-items: center;
       cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 20px;
+      transition: background-color 0.2s;
+    }
+
+    .header .profile:hover {
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
     .header .profile img {
@@ -36,6 +49,8 @@
       height: 40px;
       border-radius: 50%;
       margin-left: 10px;
+      background-color: #333;
+      object-fit: cover;
     }
 
     .header .profile span {
@@ -50,68 +65,101 @@
       justify-content: center;
       align-items: center;
       flex-grow: 1;
+      gap: 15px;
     }
 
     .menu button {
-      background-color: #4CAF50;
+      background-color: #007BFF;
       color: white;
       border: none;
       padding: 15px 30px;
       font-size: 18px;
-      width: 200px;
+      min-width: 250px;
       border-radius: 8px;
-      margin: 10px;
+      margin: 5px;
       cursor: pointer;
-      transition: 0.3s;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .menu button:hover {
-      background-color: #45a049;
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .menu button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     /* Dark/Light Mode Toggle */
     .toggle {
-      position: absolute;
+      position: fixed;
       bottom: 20px;
       right: 20px;
       background-color: #333;
       color: white;
-      padding: 10px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       cursor: pointer;
       font-size: 20px;
       border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
     }
 
-    .toggle:focus {
-      outline: none;
+    body.light-mode .toggle {
+      background-color: #ddd;
+      color: #333;
+    }
+
+    .toggle:hover {
+      background-color: #444;
+    }
+
+    body.light-mode .toggle:hover {
+      background-color: #ccc;
     }
 
     /* Profile Dropdown */
     .dropdown {
       display: none;
       position: absolute;
-      top: 50px;
-      right: 0;
-      background-color: #333;
+      top: 60px;
+      right: 20px;
+      background-color: #1e1e1e;
       color: white;
-      padding: 10px;
+      padding: 10px 0;
       border-radius: 8px;
-      width: 180px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      width: 200px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      z-index: 100;
+    }
+
+    body.light-mode .dropdown {
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .dropdown a {
-      color: white;
+      color: inherit;
       text-decoration: none;
-      padding: 10px 0;
+      padding: 10px 20px;
       display: block;
       font-size: 16px;
       cursor: pointer;
+      transition: background-color 0.2s;
     }
 
     .dropdown a:hover {
-      background-color: #444;
+      background-color: #007BFF;
+      color: white;
     }
 
     /* Back Button */
@@ -119,139 +167,260 @@
       position: absolute;
       top: 20px;
       left: 20px;
-      background-color: #4CAF50;
+      background-color: #333;
       padding: 10px 15px;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    body.light-mode .back-button {
+      background-color: #ddd;
+      color: #333;
     }
 
     .back-button:hover {
-      background-color: #45a049;
+      background-color: #444;
     }
 
-    /* Log In | Sign Up Buttons */
+    body.light-mode .back-button:hover {
+      background-color: #ccc;
+    }
+
+    /* Auth Buttons */
     .auth-buttons {
-      position: absolute;
+      position: fixed;
       bottom: 20px;
-      width: 100%;
+      left: 0;
+      right: 0;
       display: flex;
       justify-content: center;
       gap: 20px;
+      padding: 10px;
     }
 
     .auth-buttons button {
-      background-color: #4CAF50;
+      background-color: #007BFF;
       color: white;
       padding: 12px 25px;
-      font-size: 18px;
-      width: 120px;
+      font-size: 16px;
+      min-width: 120px;
       border-radius: 8px;
       cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
     }
 
     .auth-buttons button:hover {
-      background-color: #45a049;
+      background-color: #0056b3;
     }
 
-    .auth-buttons button:focus {
-      outline: none;
+    /* Status Message */
+    .status-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 1000;
     }
   </style>
 </head>
-<body>
+<body class="dark-mode">
+  <!-- Status Message -->
+  <div class="status-message" id="statusMessage"></div>
+
   <!-- Back Button -->
-  <button class="back-button" onclick="window.location.href='index.html'">Back</button>
+  <button class="back-button" onclick="window.location.href='index.html'">← Back</button>
 
   <!-- Header Section -->
   <div class="header">
     <!-- Profile and Dropdown Menu -->
-    <div class="profile" onclick="toggleDropdown()">
+    <div class="profile" id="profileSection" style="display: none;">
       <span id="usernameDisplay">Guest</span>
-      <img src="default_profile_icon.png" alt="Profile Icon" id="profileIcon">
+      <img src="default_profile.png" alt="Profile Icon" id="profileIcon">
     </div>
     <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">My Profile</a>
       <a href="#" onclick="signOut()">Sign Out</a>
     </div>
   </div>
 
   <!-- Menu Section -->
   <div class="menu">
-    <button onclick="window.location.href='findFriend.html'">Find Friend</button>
-    <button onclick="window.location.href='chat.html'">Chat</button>
+    <button id="findFriendBtn" onclick="checkAuth('findFriend.html')">Find Friend</button>
+    <button id="chatBtn" onclick="checkAuth('chat.html')">Chat</button>
   </div>
 
   <!-- Light/Dark Mode Toggle -->
-  <button class="toggle" onclick="toggleDarkMode()">🌙</button>
+  <button class="toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
 
-  <!-- Log In | Sign Up Buttons -->
-  <div class="auth-buttons">
+  <!-- Auth Buttons (shown when not logged in) -->
+  <div class="auth-buttons" id="authButtons">
     <button onclick="window.location.href='login.html'">Log In</button>
     <button onclick="window.location.href='signup.html'">Sign Up</button>
   </div>
 
-  <!-- Firebase SDK Integration -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
       authDomain: "btchizl.firebaseapp.com",
       projectId: "btchizl",
-      storageBucket: "btchizl.firebasestorage.app",
+      storageBucket: "btchizl.appspot.com",
       messagingSenderId: "113542799682",
       appId: "1:113542799682:web:0b2df380ef6e172e5d68db",
       measurementId: "G-RCQHVSFFQS"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    // Check user sign-in state
-    onAuthStateChanged(auth, (user) => {
+    // DOM elements
+    const profileSection = document.getElementById('profileSection');
+    const authButtons = document.getElementById('authButtons');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const usernameDisplay = document.getElementById('usernameDisplay');
+    const profileIcon = document.getElementById('profileIcon');
+    const findFriendBtn = document.getElementById('findFriendBtn');
+    const chatBtn = document.getElementById('chatBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // Check authentication state
+    auth.onAuthStateChanged((user) => {
       if (user) {
-        // Show username and update profile icon if available
-        document.getElementById('usernameDisplay').textContent = user.displayName || 'Username';
-        const profileImage = user.photoURL || 'default_profile_icon.png'; // Default if no custom image
-        document.getElementById('profileIcon').src = profileImage;
+        // User is signed in
+        profileSection.style.display = 'flex';
+        authButtons.style.display = 'none';
+        
+        // Set user info
+        usernameDisplay.textContent = user.displayName || user.email || 'User';
+        
+        // Set profile picture if available
+        if (user.photoURL) {
+          profileIcon.src = user.photoURL;
+        } else {
+          // Generate default avatar with first letter
+          const canvas = document.createElement('canvas');
+          canvas.width = 40;
+          canvas.height = 40;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#007BFF';
+          ctx.fillRect(0, 0, 40, 40);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = '20px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          const displayName = user.displayName || user.email || 'U';
+          ctx.fillText(displayName.charAt(0).toUpperCase(), 20, 20);
+          profileIcon.src = canvas.toDataURL();
+        }
+
+        // Show welcome message if just logged in
+        if (sessionStorage.getItem('justLoggedIn')) {
+          showStatusMessage('Successfully logged in!');
+          sessionStorage.removeItem('justLoggedIn');
+        }
+      } else {
+        // User is signed out
+        profileSection.style.display = 'none';
+        authButtons.style.display = 'flex';
       }
     });
 
-    // Sign out user
+    // Toggle dropdown menu
+    profileSection.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Close dropdown when clicking elsewhere
+    document.addEventListener('click', () => {
+      dropdownMenu.style.display = 'none';
+    });
+
+    // Sign out function
     function signOut() {
-      auth.signOut().then(() => {
-        window.location.href = 'index.html'; // Redirect to index after sign-out
-      }).catch((error) => {
-        console.error('Sign out error:', error);
+      auth.signOut()
+        .then(() => {
+          showStatusMessage('Successfully signed out');
+          setTimeout(() => window.location.href = 'index.html', 1000);
+        })
+        .catch((error) => {
+          showStatusMessage('Error signing out: ' + error.message, true);
+        });
+    }
+
+    // Check authentication before navigation
+    function checkAuth(page) {
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          window.location.href = page;
+        } else {
+          showStatusMessage('Please log in to access this feature', true);
+          setTimeout(() => window.location.href = 'login.html', 1500);
+        }
       });
     }
 
-    // Toggle dropdown menu
-    function toggleDropdown() {
-      const dropdown = document.getElementById('dropdownMenu');
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    // Show status message
+    function showStatusMessage(message, isError = false) {
+      statusMessage.textContent = message;
+      statusMessage.style.backgroundColor = isError ? '#ff4d4f' : '#4CAF50';
+      statusMessage.style.display = 'block';
+      setTimeout(() => {
+        statusMessage.style.display = 'none';
+      }, 3000);
     }
 
     // Toggle dark/light mode
     function toggleDarkMode() {
       const body = document.body;
-      const isDark = body.style.backgroundColor === 'rgb(18, 18, 18)'; // check if currently in dark mode
+      body.classList.toggle('dark-mode');
+      body.classList.toggle('light-mode');
+      
+      // Update theme toggle button
+      themeToggle.textContent = body.classList.contains('dark-mode') ? '🌙' : '🌞';
+      
+      // Save preference to localStorage
+      localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+    }
 
-      if (isDark) {
-        // Switch to light mode
-        body.style.backgroundColor = '#ffffff';
-        body.style.color = '#121212';
-        document.querySelector('.toggle').textContent = '🌙'; // Change to dark mode icon
-      } else {
-        // Switch to dark mode
-        body.style.backgroundColor = '#121212';
-        body.style.color = 'white';
-        document.querySelector('.toggle').textContent = '🌞'; // Change to light mode icon
+    // Initialize theme from localStorage
+    function initTheme() {
+      const darkMode = localStorage.getItem('darkMode') !== 'false';
+      const body = document.body;
+      
+      if (!darkMode) {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        themeToggle.textContent = '🌞';
       }
     }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      
+      // Disable buttons if not logged in
+      auth.onAuthStateChanged((user) => {
+        findFriendBtn.disabled = !user;
+        chatBtn.disabled = !user;
+      });
+    });
   </script>
 </body>
 </html>
