@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Users</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #121212;
+      color: white;
+      transition: background-color 0.3s, color 0.3s;
+      padding: 20px;
+    }
+
+    body.light-mode {
+      background-color: #f5f5f5;
+      color: #121212;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .search-container {
+      position: sticky;
+      top: 0;
+      background-color: inherit;
+      padding: 20px 0;
+      z-index: 100;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 25px;
+      border: none;
+      background-color: #2a2a2c;
+      color: white;
+      font-size: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+
+    body.light-mode .search-bar {
+      background-color: #f0f0f0;
+      color: #121212;
+    }
+
+    .search-bar:focus {
+      outline: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .user-list {
+      margin-top: 20px;
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      margin-bottom: 10px;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    body.light-mode .user-card {
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .user-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+      background-color: #007BFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .user-info {
+      flex-grow: 1;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .add-friend-btn {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .add-friend-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .add-friend-btn.added {
+      background-color: #4CAF50;
+    }
+
+    .add-friend-btn.pending {
+      background-color: #FFC107;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #333;
+      padding: 10px 15px;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    body.light-mode .back-button {
+      background-color: #ddd;
+      color: #333;
+    }
+
+    .back-button:hover {
+      background-color: #444;
+    }
+
+    body.light-mode .back-button:hover {
+      background-color: #ccc;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #333;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+    }
+
+    body.light-mode .theme-toggle {
+      background-color: #ddd;
+      color: #333;
+    }
+
+    .theme-toggle:hover {
+      background-color: #444;
+    }
+
+    body.light-mode .theme-toggle:hover {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="container">
+    <button class="back-button" onclick="window.history.back()">← Back</button>
+    
+    <div class="search-container">
+      <input type="text" class="search-bar" id="searchInput" placeholder="Search users..." autocomplete="off">
+    </div>
+
+    <div class="user-list" id="userList">
+      <!-- Users will be dynamically inserted here -->
+    </div>
+  </div>
+
+  <button class="theme-toggle" id="themeToggle" onclick="toggleDarkMode()">🌙</button>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
+      authDomain: "btchizl.firebaseapp.com",
+      projectId: "btchizl",
+      storageBucket: "btchizl.appspot.com",
+      messagingSenderId: "113542799682",
+      appId: "1:113542799682:web:0b2df380ef6e172e5d68db",
+      measurementId: "G-RCQHVSFFQS"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // DOM elements
+    const searchInput = document.getElementById('searchInput');
+    const userList = document.getElementById('userList');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // Current user and friends data
+    let currentUser = null;
+    let allUsers = [];
+    let friends = [];
+    let pendingRequests = [];
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initAuth();
+      setupSearch();
+    });
+
+    function initAuth() {
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          currentUser = user;
+          loadAllUsers();
+          loadFriends();
+          loadPendingRequests();
+        } else {
+          window.location.href = 'login.html';
+        }
+      });
+    }
+
+    async function loadAllUsers() {
+      try {
+        const snapshot = await db.collection('users').get();
+        allUsers = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })).filter(user => user.id !== currentUser.uid);
+        
+        renderUserList(allUsers);
+      } catch (error) {
+        console.error("Error loading users:", error);
+      }
+    }
+
+    async function loadFriends() {
+      try {
+        const doc = await db.collection('friends').doc(currentUser.uid).get();
+        if (doc.exists) {
+          friends = doc.data().friendIds || [];
+        }
+      } catch (error) {
+        console.error("Error loading friends:", error);
+      }
+    }
+
+    async function loadPendingRequests() {
+      try {
+        const snapshot = await db.collection('friendRequests')
+          .where('receiverId', '==', currentUser.uid)
+          .where('status', '==', 'pending')
+          .get();
+        
+        pendingRequests = snapshot.docs.map(doc => doc.data().senderId);
+      } catch (error) {
+        console.error("Error loading pending requests:", error);
+      }
+    }
+
+    function renderUserList(users) {
+      userList.innerHTML = '';
+      
+      users.forEach(user => {
+        const isFriend = friends.includes(user.id);
+        const isPending = pendingRequests.includes(user.id);
+        
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+        
+        // Create avatar (using first letter if no photo)
+        const avatar = document.createElement('div');
+        avatar.className = 'user-avatar';
+        if (user.photoURL) {
+          avatar.style.backgroundImage = `url(${user.photoURL})`;
+          avatar.style.backgroundSize = 'cover';
+        } else {
+          avatar.textContent = user.username.charAt(0).toUpperCase();
+        }
+        
+        // User info
+        const userInfo = document.createElement('div');
+        userInfo.className = 'user-info';
+        
+        const username = document.createElement('div');
+        username.className = 'username';
+        username.textContent = user.username;
+        
+        userInfo.appendChild(username);
+        
+        // Add friend button
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add-friend-btn';
+        addBtn.innerHTML = '+';
+        
+        if (isFriend) {
+          addBtn.classList.add('added');
+          addBtn.innerHTML = '✓';
+          addBtn.title = 'Friends';
+        } else if (isPending) {
+          addBtn.classList.add('pending');
+          addBtn.innerHTML = '⌛';
+          addBtn.title = 'Request Pending';
+        } else {
+          addBtn.title = 'Add Friend';
+          addBtn.addEventListener('click', () => sendFriendRequest(user.id));
+        }
+        
+        userCard.appendChild(avatar);
+        userCard.appendChild(userInfo);
+        userCard.appendChild(addBtn);
+        
+        userList.appendChild(userCard);
+      });
+    }
+
+    function setupSearch() {
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredUsers = allUsers.filter(user => 
+          user.username.toLowerCase().includes(searchTerm)
+        );
+        renderUserList(filteredUsers);
+      });
+    }
+
+    async function sendFriendRequest(userId) {
+      try {
+        await db.collection('friendRequests').add({
+          senderId: currentUser.uid,
+          receiverId: userId,
+          status: 'pending',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        pendingRequests.push(userId);
+        renderUserList(allUsers);
+      } catch (error) {
+        console.error("Error sending friend request:", error);
+      }
+    }
+
+    // Theme functions
+    function toggleDarkMode() {
+      const body = document.body;
+      const isLight = body.classList.contains('light-mode');
+      
+      if (isLight) {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        themeToggle.textContent = '🌙';
+        localStorage.setItem('darkMode', 'true');
+      } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        themeToggle.textContent = '🌞';
+        localStorage.setItem('darkMode', 'false');
+      }
+    }
+
+    function initTheme() {
+      const darkMode = localStorage.getItem('darkMode') !== 'false';
+      if (!darkMode) {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        themeToggle.textContent = '🌞';
+      }
+    }
+  </script>
+</body>
+</html>
