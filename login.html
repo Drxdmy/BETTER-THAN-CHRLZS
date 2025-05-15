@@ -181,8 +181,8 @@
   </style>
 </head>
 <body class="dark-mode">
-  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
-  <button class="back-to-chat-button" onclick="goBackToChat()">←</button>
+  <button class="theme-toggle">🌙</button>
+  <button class="back-to-chat-button">←</button>
 
   <div class="login-container">
     <h2>Login</h2>
@@ -196,18 +196,17 @@
       <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
     </div>
     <div id="error-message"></div>
-    <button class="login-button" onclick="login()">Login</button>
+    <button class="login-button" id="login-button">Login</button>
     <div class="forgot-password">
-      <a href="#" onclick="showPasswordReset()">Forgot your password?</a>
+      <a href="#" id="reset-password">Forgot your password?</a>
     </div>
   </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-  
+
   <script>
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBKqvKARMldprCM0A-NdDe382fKXGClAaY",
       authDomain: "btchizl.firebaseapp.com",
@@ -218,37 +217,30 @@
       measurementId: "G-RCQHVSFFQS"
     };
 
-    // Initialize Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Check if user is already logged in
     auth.onAuthStateChanged((user) => {
       if (user) {
-        window.location.href = 'menu';
+        window.location.href = 'menu.html';
       }
     });
 
-    // Login function
     function login() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const errorEl = document.getElementById('error-message');
 
-      // Basic validation
       if (!email || !password) {
         showError('Please fill out all fields');
         return;
       }
 
-      // Firebase authentication
       auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          // Successfully logged in
-          window.location.href = 'menu';
+        .then(() => {
+          window.location.href = 'menu.html';
         })
         .catch((error) => {
-          // Handle errors
           let errorMessage = error.message;
           if (error.code === 'auth/invalid-email') {
             errorMessage = 'Invalid email address';
@@ -261,7 +253,6 @@
         });
     }
 
-    // Show error message
     function showError(msg) {
       const errorEl = document.getElementById('error-message');
       errorEl.textContent = msg;
@@ -269,61 +260,49 @@
       setTimeout(() => errorEl.style.display = 'none', 4000);
     }
 
-    // Password reset function
     function showPasswordReset() {
       const email = prompt('Please enter your email address for password reset:');
       if (email) {
         auth.sendPasswordResetEmail(email)
-          .then(() => {
-            alert('Password reset email sent. Please check your inbox.');
-          })
-          .catch((error) => {
-            alert('Error sending reset email: ' + error.message);
-          });
+          .then(() => alert('Password reset email sent. Please check your inbox.'))
+          .catch((error) => alert('Error sending reset email: ' + error.message));
       }
     }
 
-    // Back to Chat Button Functionality
     function goBackToChat() {
-      window.location.href = 'menu';
+      window.location.href = 'menu.html';
     }
 
-    // Toggle Theme Functionality
     function toggleTheme() {
       const body = document.body;
-      body.classList.toggle('dark-mode');
-      body.classList.toggle('light-mode');
-      localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-      
-      // Update theme toggle button icon
-      const themeToggleButton = document.querySelector('.theme-toggle');
-      themeToggleButton.textContent = body.classList.contains('dark-mode') ? "🌙" : "🌞";
+      const toggleBtn = document.querySelector('.theme-toggle');
+      const darkMode = body.classList.toggle('dark-mode');
+      body.classList.toggle('light-mode', !darkMode);
+      localStorage.setItem('darkMode', darkMode);
+      toggleBtn.textContent = darkMode ? "🌙" : "🌞";
     }
 
-    // Initialize theme from localStorage
     function initTheme() {
       const darkMode = localStorage.getItem('darkMode') !== 'false';
       const body = document.body;
-      const themeToggleButton = document.querySelector('.theme-toggle');
-      
-      if (!darkMode) {
-        body.classList.remove('dark-mode');
-        body.classList.add('light-mode');
-        themeToggleButton.textContent = "🌞";
-      } else {
-        themeToggleButton.textContent = "🌙";
-      }
+      const toggleBtn = document.querySelector('.theme-toggle');
+      body.classList.toggle('dark-mode', darkMode);
+      body.classList.toggle('light-mode', !darkMode);
+      toggleBtn.textContent = darkMode ? "🌙" : "🌞";
     }
 
-    // Initialize page
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       initTheme();
-      
-      // Allow login on Enter key
-      document.getElementById('password').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          login();
-        }
+
+      document.getElementById('login-button').addEventListener('click', login);
+      document.getElementById('password').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') login();
+      });
+      document.querySelector('.back-to-chat-button').addEventListener('click', goBackToChat);
+      document.querySelector('.theme-toggle').addEventListener('click', toggleTheme);
+      document.getElementById('reset-password').addEventListener('click', function (e) {
+        e.preventDefault();
+        showPasswordReset();
       });
     });
   </script>
